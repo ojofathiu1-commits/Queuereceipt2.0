@@ -279,6 +279,16 @@ document.addEventListener('DOMContentLoaded', function () {
   window.addEventListener('resize', onResize, { passive: true });
   if (mobileQuery.addEventListener) mobileQuery.addEventListener('change', onResize);
 
+  // Belt and suspenders: whatever actually changes the bar's rendered height
+  // (a late font swap, iOS dynamic type, an orientation flip) re-syncs the
+  // spacer directly, instead of relying on catching every possible cause.
+  if (typeof ResizeObserver === 'function') {
+    var tocResizeObserver = new ResizeObserver(function () {
+      applyMetrics();
+    });
+    tocResizeObserver.observe(tocNav);
+  }
+
   /* ---- clicks ---------------------------------------------------------- */
 
   /* No preventDefault: the browser's own anchor navigation already honours
@@ -318,7 +328,6 @@ document.addEventListener('DOMContentLoaded', function () {
     var target = id && document.getElementById(id);
     if (!target || sections.indexOf(target) === -1) return;
 
-    applyMetrics();
     var maxY = root.scrollHeight - window.innerHeight;
     var y = Math.max(0, Math.min(
       Math.round(target.getBoundingClientRect().top + window.pageYOffset - referenceLine() + 4),
@@ -329,6 +338,10 @@ document.addEventListener('DOMContentLoaded', function () {
   };
 
   var settle = function () {
+    // Re-measure every time: a webfont swap or late image load can change the
+    // bar's real height well after the first paint, and the spacer must track
+    // it exactly or whatever comes right after the bar ends up underneath it.
+    applyMetrics();
     pinToHash();
     update();
   };
