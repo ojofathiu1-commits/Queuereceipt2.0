@@ -67,6 +67,24 @@ document.addEventListener('DOMContentLoaded', function () {
   var mobileQuery = window.matchMedia('(max-width: 640px)');
   var isMobile = function () { return mobileQuery.matches; };
   var userScrolled = false;
+  var viewport = window.visualViewport || null;
+
+  /* ---- viewport basis ------------------------------------------------ *
+   * Everything below compares against getBoundingClientRect(), which is
+   * always in layout-viewport CSS pixels. window.innerHeight is NOT: in
+   * mobile Safari it reports the *visual* viewport, so a pinch shrinks it
+   * (and fires resize). Mixing the two made zooming silently rewrite the
+   * footer-hide threshold and the end-of-document test -- the bar would fly
+   * back in mid-gesture. documentElement.clientHeight is the layout viewport
+   * everywhere and is unaffected by zoom.
+   * -------------------------------------------------------------------- */
+
+  var viewportHeight = function () { return root.clientHeight || window.innerHeight; };
+  var maxScrollY = function () { return Math.max(0, root.scrollHeight - viewportHeight()); };
+
+  // Treated as "the user is pinched in". Scale is fractional mid-gesture, so
+  // the threshold has slack rather than testing !== 1.
+  var isZoomed = function () { return !!viewport && viewport.scale > 1.02; };
 
   /* ---- measurement -------------------------------------------------- *
    * The in-flow bar and the docked bar are deliberately given the same box
@@ -103,7 +121,10 @@ document.addEventListener('DOMContentLoaded', function () {
   /* ---- horizontal auto-centering ------------------------------------ */
 
   var centerLink = function (link, smooth) {
-    if (!link || !isMobile()) return;
+    // Never scroll the pill row while the user is pinching: the bar is under
+    // their fingers and a programmatic sideways jump reads as the page
+    // fighting them.
+    if (!link || !isMobile() || isZoomed()) return;
     var maxScroll = tocNav.scrollWidth - tocNav.clientWidth;
     if (maxScroll <= 0) return;
 
@@ -142,7 +163,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // At the very bottom of the document the last sections can never reach
     // the reading line, so honour the scroll end explicitly.
-    if (window.pageYOffset + window.innerHeight >= root.scrollHeight - 2) {
+    if (window.pageYOffset >= maxScrollY() - 2) {
       return sections[sections.length - 1].id;
     }
 
@@ -174,11 +195,18 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
 
-    // Nothing above the bar moves when it docks (the spacer that replaces it
-    // sits below and is exactly its height), so the sentinel's position is
-    // stable and this test cannot oscillate.
+    /* Nothing above the bar moves when it docks (the spacer that replaces it
+       sits below and is exactly its height), and the sentinel sits above both,
+       so the sentinel's position is stable and this test cannot oscillate.
+
+       The zoom term: a position:fixed box is laid out against the *layout*
+       viewport, so while the user is pinched in it is painted at the zoom
+       scale over wherever they have panned to - a giant bar swimming across
+       the content, pinned to nothing they can see. Undocking releases it back
+       into the article for the duration of the zoom, and because the spacer is
+       withdrawn in the same frame the page underneath does not move at all. */
     if (sentinel && spacer) {
-      var shouldStick = sentinel.getBoundingClientRect().top <= headerHeight;
+      var shouldStick = sentinel.getBoundingClientRect().top <= headerHeight && !isZoomed();
       if (shouldStick !== stuck) {
         stuck = shouldStick;
         // Both applied in the same frame: no intermediate layout is painted.
@@ -193,7 +221,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var shouldHide = menuOpen;
     if (!shouldHide && siteFooter) {
       var footerTop = siteFooter.getBoundingClientRect().top;
-      var vh = window.innerHeight;
+      var vh = viewportHeight();
       shouldHide = hidden ? footerTop < vh * 0.62 : footerTop < vh * 0.5;
     }
     if (shouldHide !== hidden) {
@@ -279,6 +307,32 @@ document.addEventListener('DOMContentLoaded', function () {
   window.addEventListener('resize', onResize, { passive: true });
   if (mobileQuery.addEventListener) mobileQuery.addEventListener('change', onResize);
 
+  /* ---- pinch-zoom ------------------------------------------------------ *
+   * The visual viewport is the only thing that actually moves during a pinch,
+   * and it is the only API that reports it in every engine (mobile Safari
+   * also fires window resize, Chrome does not). Docking is re-evaluated live
+   * so the bar releases the moment the zoom starts, but re-measuring is left
+   * until the gesture settles: offsetHeight is stable under zoom, so running
+   * it mid-pinch is pure churn.
+   * ---------------------------------------------------------------------- */
+
+  if (viewport) {
+    var settleTimer = null;
+
+    var onViewportChange = function () {
+      onScroll();
+      clearTimeout(settleTimer);
+      settleTimer = setTimeout(function () {
+        applyMetrics();
+        update();
+        centerLink(tocNav.querySelector('.legal-toc-active'), false);
+      }, 160);
+    };
+
+    viewport.addEventListener('resize', onViewportChange, { passive: true });
+    viewport.addEventListener('scroll', onViewportChange, { passive: true });
+  }
+
   // Belt and suspenders: whatever actually changes the bar's rendered height
   // (a late font swap, iOS dynamic type, an orientation flip) re-syncs the
   // spacer directly, instead of relying on catching every possible cause.
@@ -303,9 +357,8 @@ document.addEventListener('DOMContentLoaded', function () {
       userScrolled = true;
       setActive(id);
 
-      var maxY = root.scrollHeight - window.innerHeight;
       var y = target.getBoundingClientRect().top + window.pageYOffset - referenceLine() + 4;
-      mute(Math.max(0, Math.min(Math.round(y), maxY)));
+      mute(Math.max(0, Math.min(Math.round(y), maxScrollY())));
     });
   });
 
@@ -328,10 +381,9 @@ document.addEventListener('DOMContentLoaded', function () {
     var target = id && document.getElementById(id);
     if (!target || sections.indexOf(target) === -1) return;
 
-    var maxY = root.scrollHeight - window.innerHeight;
     var y = Math.max(0, Math.min(
       Math.round(target.getBoundingClientRect().top + window.pageYOffset - referenceLine() + 4),
-      maxY
+      maxScrollY()
     ));
     if (Math.abs(window.pageYOffset - y) > 1) window.scrollTo({ top: y, behavior: 'instant' });
     setActive(id, false);

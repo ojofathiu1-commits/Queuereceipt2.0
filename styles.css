@@ -1346,6 +1346,12 @@ a {
   margin: 0 auto;
   padding: 80px 156px 70px;
   background: #161E34;
+  /* The glow below hangs 100px past the right edge. Without clipping it here
+     (the same way .final-cta clips its own glow) it widens the initial
+     containing block, so on a 390px phone the page lays out 490px wide: the
+     extra 100px is invisible at rest but is real, pannable, empty page as soon
+     as the user pinch-zooms. */
+  overflow: hidden;
 }
 
 .legal-hero-gradient {
@@ -2218,7 +2224,10 @@ section[id].legal-section {
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    will-change: transform;
+    /* No will-change here: the bar is already composited as a scroll container,
+       so it bought no extra layer, and permanently promoting a position:fixed
+       element leaves it rasterised at the pre-pinch scale for the length of a
+       zoom gesture. */
     transition:
       border-color 0.24s ease,
       box-shadow 0.3s ease,
