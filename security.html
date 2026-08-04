@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security — QueueReceipts</title>
+<link rel="preconnect" href="https://api.fontshare.com">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="header-nav">
+  <div class="header-container">
+    <a href="index.html" class="logo">
+      <img src="images/logo.png" alt="QueueReceipts" width="114" height="40">
+    </a>
+
+    <nav class="nav-links">
+      <a href="index.html#why-us">Why us</a>
+      <a href="index.html#how-it-works">How it works</a>
+      <a href="index.html#features">Features</a>
+      <a href="index.html#for-you">For you</a>
+      <a href="index.html#faq">FAQ</a>
+    </nav>
+
+    <div class="header-actions">
+      <a href="index.html#retailer-demo" class="request-demo">Request demo</a>
+      <a href="index.html#final-cta" class="get-app-btn">Get the app</a>
+    </div>
+
+    <button type="button" class="menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav">
+      <span class="menu-toggle-bar"></span>
+      <span class="menu-toggle-bar"></span>
+      <span class="menu-toggle-bar"></span>
+    </button>
+  </div>
+
+  <nav id="mobile-nav" class="mobile-nav">
+    <a href="index.html#why-us">Why us</a>
+    <a href="index.html#how-it-works">How it works</a>
+    <a href="index.html#features">Features</a>
+    <a href="index.html#for-you">For you</a>
+    <a href="index.html#faq">FAQ</a>
+    <a href="index.html#retailer-demo" class="mobile-nav-demo">Request demo</a>
+  </nav>
+</header>
+
+<section class="legal-hero">
+  <div class="legal-hero-container">
+    <span class="tag tag-dark">TRUST &amp; SAFETY</span>
+    <h1 class="legal-hero-heading">Security</h1>
+    <p class="legal-hero-date">Last updated: 1 June 2026</p>
+  </div>
+  <div class="legal-hero-gradient"></div>
+</section>
+
+<div class="legal-layout">
+  <aside class="legal-sidebar">
+    <a href="index.html#footer" class="legal-back">
+      <img src="images/icon-arrow-left.svg" alt="" width="16" height="16">
+      Back to home
+    </a>
+    <span class="legal-sidebar-title">CONTENTS</span>
+    <div class="legal-toc-sentinel"></div>
+    <nav class="legal-toc">
+      <a href="#our-commitment" class="legal-toc-link">Our commitment</a>
+      <a href="#encryption" class="legal-toc-link">Encryption</a>
+      <a href="#infrastructure" class="legal-toc-link">Infrastructure</a>
+      <a href="#access-controls" class="legal-toc-link">Access controls</a>
+      <a href="#account-security" class="legal-toc-link">Account security</a>
+      <a href="#data-handling" class="legal-toc-link">Data handling</a>
+      <a href="#incident-response" class="legal-toc-link">Incident response</a>
+      <a href="#vulnerability-disclosure" class="legal-toc-link">Vulnerability disclosure</a>
+      <a href="#report-an-issue" class="legal-toc-link">Report an issue</a>
+    </nav>
+    <div class="legal-toc-spacer"></div>
+  </aside>
+
+  <main class="legal-content">
+    <section id="our-commitment" class="legal-section">
+      <h2>Our commitment</h2>
+      <p>Your receipts contain real financial information. We treat the security of that data with the same seriousness you would. QueueReceipts is built with security as a foundational requirement, not an afterthought.</p>
+      <div class="legal-commitment-cards">
+        <div class="legal-commitment-card">
+          <div class="legal-commitment-icon">
+            <img src="images/SVG.svg" alt="" width="22" height="22">
+          </div>
+          <h4>Encrypted at rest</h4>
+          <p>All receipt data is encrypted using AES-256 before it is written to storage.</p>
+        </div>
+        <div class="legal-commitment-card">
+          <div class="legal-commitment-icon">
+            <img src="images/2.svg" alt="" width="22" height="22">
+          </div>
+          <h4>Encrypted in transit</h4>
+          <p>All data in transit is protected with TLS 1.2 or higher. Older protocols are disabled.</p>
+        </div>
+        <div class="legal-commitment-card">
+          <div class="legal-commitment-icon">
+            <img src="images/3.svg" alt="" width="22" height="22">
+          </div>
+          <h4>Regular audits</h4>
+          <p>We conduct regular internal security reviews and periodic third-party penetration tests.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="encryption" class="legal-section">
+      <h2>Encryption</h2>
+
+      <h3>Data at rest</h3>
+      <p>All user data stored in our databases and file storage — including receipt images, extracted data, and account information — is encrypted using AES-256. Encryption keys are managed using a dedicated key management service with strict access controls and automatic key rotation.</p>
+
+      <h3>Data in transit</h3>
+      <p>All communication between the QueueReceipts app, website, and our servers is encrypted using TLS 1.2 or TLS 1.3. We enforce HTTPS across all endpoints and use HTTP Strict Transport Security (HSTS) to prevent protocol downgrade attacks.</p>
+
+      <h3>Receipt images</h3>
+      <p>Receipt images are stored in encrypted object storage, access-controlled by per-user credentials. Even our own engineering team cannot access the contents of your receipt vault without your authorisation.</p>
+    </section>
+
+    <section id="infrastructure" class="legal-section">
+      <h2>Infrastructure</h2>
+      <p>QueueReceipts runs on enterprise-grade cloud infrastructure with redundancy across multiple availability zones. Our infrastructure providers maintain ISO 27001 and SOC 2 Type II certifications.</p>
+      <ul class="legal-defs">
+        <li>Network perimeter protection via managed firewalls and intrusion detection.</li>
+        <li>Regular automated vulnerability scanning of all systems and dependencies.</li>
+        <li>Infrastructure-as-code with version-controlled, auditable configuration.</li>
+        <li>Automated daily backups with point-in-time recovery capability.</li>
+        <li>Isolated production and development environments with no shared credentials.</li>
+      </ul>
+    </section>
+
+    <section id="access-controls" class="legal-section">
+      <h2>Access controls</h2>
+      <p>We apply the principle of least privilege throughout our organisation. Access to production systems and user data is:</p>
+      <ul class="legal-defs">
+        <li>Restricted to a minimal number of authorised engineers.</li>
+        <li>Granted only when required for a specific, documented operational purpose.</li>
+        <li>Protected by mandatory multi-factor authentication (MFA) for all staff.</li>
+        <li>Logged and audited. All access events are recorded and reviewed regularly.</li>
+        <li>Revoked immediately upon employee departure or role change.</li>
+      </ul>
+      <p>We do not grant permanent standing access to any production data. All elevated access is time-limited and requires explicit approval.</p>
+    </section>
+
+    <section id="account-security" class="legal-section">
+      <h2>Account security</h2>
+      <p>We offer the following features to help you keep your account secure:</p>
+      <ul class="legal-defs">
+        <li><strong>Secure password hashing:</strong> Passwords are hashed using bcrypt with a high work factor. We never store plaintext passwords.</li>
+        <li><strong>Multi-factor authentication (MFA):</strong> Optional TOTP-based MFA is available for all accounts and strongly encouraged.</li>
+        <li><strong>Session management:</strong> Sessions expire after a period of inactivity. You can view and revoke active sessions from account settings.</li>
+        <li><strong>Login notifications:</strong> You will receive an email alert when a new device or location signs in to your account.</li>
+        <li><strong>Breach detection:</strong> We check credentials against known breach databases at signup and login.</li>
+      </ul>
+      <div class="legal-callout">
+        <p><strong>We will never ask for your password by email, phone, or any other channel. If you receive a message requesting your password, treat it as fraudulent and report it to us.</strong></p>
+      </div>
+    </section>
+
+    <section id="data-handling" class="legal-section">
+      <h2>Data handling</h2>
+      <p>Receipt data is used solely to provide the Service to you. It is not used for advertising, sold to third parties, or shared with partners outside of the sub-processors required to operate the Service (who are contractually bound to strict data protection standards).</p>
+      <p>When you delete your account, all associated data — including receipt images and extracted records — is permanently and irreversibly deleted within 30 days. Backups containing your data are purged on the same cycle.</p>
+    </section>
+
+    <section id="incident-response" class="legal-section">
+      <h2>Incident response</h2>
+      <p>We maintain a documented incident response plan that is reviewed and tested regularly. In the event of a security incident affecting your data:</p>
+      <ul class="legal-defs">
+        <li>We will investigate promptly and contain the incident.</li>
+        <li>Affected users will be notified within 72 hours of confirming a breach, in accordance with GDPR and applicable data protection laws.</li>
+        <li>Notifications will include what happened, what data was affected, what steps we have taken, and what you can do to protect yourself.</li>
+        <li>We will report to the relevant supervisory authority (ICO for UK-based incidents) as required by law.</li>
+      </ul>
+    </section>
+
+    <section id="vulnerability-disclosure" class="legal-section">
+      <h2>Vulnerability disclosure</h2>
+      <p>We welcome responsible disclosure from security researchers. If you discover a potential vulnerability in the QueueReceipts Service, please report it to us privately before disclosing it publicly.</p>
+      <p>We ask that you:</p>
+      <ul class="legal-defs">
+        <li>Report the issue to <a href="mailto:security@queuereceipts.app" class="faq-email">security@queuereceipts.app</a> with sufficient detail for us to reproduce it.</li>
+        <li>Allow us a reasonable period (typically 90 days) to investigate and remediate before any public disclosure.</li>
+        <li>Avoid accessing, modifying, or deleting data belonging to other users during your research.</li>
+      </ul>
+      <p>We will acknowledge your report within 5 business days, keep you informed of our progress, and credit you publicly if you wish once the issue is resolved.</p>
+    </section>
+
+    <section id="report-an-issue" class="legal-section">
+      <h2>Report a security issue</h2>
+      <p>If you believe you have found a security vulnerability, or if you have concerns about the security of your account or data, please contact our security team directly:</p>
+      <div class="legal-contact-card">
+        <h4>QueueReceipts Security Team</h4>
+        <p>For urgent account concerns, include "URGENT" in the subject line. We respond to all security reports within 5 business days.</p>
+        <a href="mailto:security@queuereceipts.app">security@queuereceipts.app</a>
+      </div>
+    </section>
+  </main>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="footer-logo">
+          <img src="images/logo.png" alt="QueueReceipts" width="131" height="46">
+        </a>
+        <p class="footer-desc">Every receipt, securely organised and ready for budgeting, returns, and expense tracking.</p>
+      </div>
+      <div class="footer-col">
+        <h5 class="footer-col-title">PRODUCT</h5>
+        <a href="index.html#features" class="footer-link">Features</a>
+        <a href="index.html#how-it-works" class="footer-link">How it works</a>
+        <a href="index.html#retailer-demo" class="footer-link">Retailer demo</a>
+        <a href="index.html#faq" class="footer-link">FAQ</a>
+      </div>
+      <div class="footer-col">
+        <h5 class="footer-col-title">LEGAL</h5>
+        <a href="privacy-policy.html" class="footer-link">Privacy Policy</a>
+        <a href="terms-of-use.html" class="footer-link">Terms of Use</a>
+        <a href="security.html" class="footer-link">Security</a>
+      </div>
+      <div class="footer-col">
+        <h5 class="footer-col-title">SOCIALS</h5>
+        <a href="https://x.com/QueueReceipts" target="_blank" rel="noopener" class="footer-link">Twitter / X</a>
+        <a href="https://www.instagram.com/queuereceipts/" target="_blank" rel="noopener" class="footer-link">Instagram</a>
+        <a href="https://www.linkedin.com/company/queuereceipts" target="_blank" rel="noopener" class="footer-link">LinkedIn</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 QueueReceipts. All rights reserved.</p>
+      <p>Receipts, organised and secure.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="scripts.js"></script>
+</body>
+</html>

@@ -25,10 +25,25 @@
     </nav>
 
     <div class="header-actions">
-      <a href="#" class="request-demo">Request demo</a>
-      <a href="#" class="get-app-btn">Get the app</a>
+      <a href="#retailer-demo" class="request-demo">Request demo</a>
+      <a href="#final-cta" class="get-app-btn">Get the app</a>
     </div>
+
+    <button type="button" class="menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav">
+      <span class="menu-toggle-bar"></span>
+      <span class="menu-toggle-bar"></span>
+      <span class="menu-toggle-bar"></span>
+    </button>
   </div>
+
+  <nav id="mobile-nav" class="mobile-nav">
+    <a href="#why-us">Why us</a>
+    <a href="#how-it-works">How it works</a>
+    <a href="#features">Features</a>
+    <a href="#for-you">For you</a>
+    <a href="#faq">FAQ</a>
+    <a href="#retailer-demo" class="mobile-nav-demo">Request demo</a>
+  </nav>
 </header>
 
 <section class="hero">
@@ -53,7 +68,7 @@
           <img src="images/download-icon.svg" alt="" width="19" height="19">
           Download the app
         </a>
-        <a href="#" class="btn btn-secondary">See how it works</a>
+        <a href="#how-it-works" class="btn btn-secondary">See how it works</a>
       </div>
 
     </div>
@@ -90,7 +105,7 @@
   </div>
 </section>
 
-<section class="problem">
+<section class="problem" id="why-us">
   <div class="problem-container">
     <div class="problem-text">
       <span class="tag">THE PROBLEM WITH PAPER RECEIPTS</span>
@@ -116,7 +131,7 @@
     </div>
   </div>
 </section>
-<section class="how-it-works">
+<section class="how-it-works" id="how-it-works">
   <div class="hiw-text">
     <span class="tag">HOW IT WORKS</span>
     <h2 class="hiw-heading">Two ways in.<br>One organised record.</h2>
@@ -149,7 +164,7 @@
     </div>
   </div>
 </section>
-<section class="features">
+<section class="features" id="features">
   <div class="features-container">
     <div class="features-text">
       <span class="tag tag-dark">FEATURES</span>
@@ -215,7 +230,7 @@
     </div>
   </div>
 </section>
-<section class="segments">
+<section class="segments" id="for-you">
   <div class="segments-text">
     <span class="tag">FOR YOU</span>
     <h2 class="segments-heading">One app. However you shop.</h2>
@@ -257,7 +272,7 @@
   </div>
 </section>
 
-<section class="retailer-cta">
+<section class="retailer-cta" id="retailer-demo">
   <div class="retailer-cta-grid">
     <div class="retailer-cta-text">
       <span class="tag tag-dark">FOR RETAILERS</span>
@@ -306,7 +321,7 @@
     </div>
   </div>
 </section>
-<section class="faq">
+<section class="faq" id="faq">
   <div class="faq-grid">
     <div class="faq-text">
       <span class="tag">GOOD QUESTIONS</span>
@@ -314,38 +329,38 @@
       <p class="faq-paragraph">Still curious? Reach the team any time at <a href="mailto:hello@queuereceipts.app" class="faq-email">hello@queuereceipts.app</a>.</p>
     </div>
     <div class="faq-list">
-      <button class="faq-item">
+      <button class="faq-item" aria-expanded="false">
         <span class="faq-question">What exactly is QueueReceipts?</span>
         <img src="images/icon-plus.svg" alt="" width="30" height="30">
       </button>
-      <button class="faq-item">
+      <button class="faq-item" aria-expanded="false">
         <span class="faq-question">How do I add a receipt?</span>
         <img src="images/icon-plus.svg" alt="" width="30" height="30">
       </button>
-      <button class="faq-item">
+      <button class="faq-item" aria-expanded="false">
         <span class="faq-question">What does QueueReceipts read from a receipt?</span>
         <img src="images/icon-plus.svg" alt="" width="30" height="30">
       </button>
-      <button class="faq-item">
+      <button class="faq-item" aria-expanded="false">
         <span class="faq-question">Can it handle different currencies?</span>
         <img src="images/icon-plus.svg" alt="" width="30" height="30">
       </button>
-      <button class="faq-item">
+      <button class="faq-item" aria-expanded="false">
         <span class="faq-question">What if a store doesn't offer QR receipts?</span>
         <img src="images/icon-plus.svg" alt="" width="30" height="30">
       </button>
-      <button class="faq-item">
+      <button class="faq-item" aria-expanded="false">
         <span class="faq-question">Can I search old receipts?</span>
         <img src="images/icon-plus.svg" alt="" width="30" height="30">
       </button>
-      <button class="faq-item faq-item-last">
+      <button class="faq-item faq-item-last" aria-expanded="false">
         <span class="faq-question">Is my data private and secure?</span>
         <img src="images/icon-plus.svg" alt="" width="30" height="30">
       </button>
     </div>
   </div>
 </section>
-<section class="final-cta">
+<section class="final-cta" id="final-cta">
   <div class="final-cta-glow"></div>
   <span class="tag final-cta-tag">GET STARTED — IT'S FREE</span>
   <h2 class="final-cta-heading">A reliable record of every purchase.</h2>
@@ -358,7 +373,7 @@
   </div>
   <p class="final-cta-microcopy">Free to start · No card required · Available on iOS &amp; Android</p>
 </section>
-<footer class="site-footer">
+<footer class="site-footer" id="footer">
   <div class="footer-container">
     <div class="footer-grid">
       <div class="footer-brand">
@@ -369,22 +384,22 @@
       </div>
       <div class="footer-col">
         <h5 class="footer-col-title">PRODUCT</h5>
-        <a href="#" class="footer-link">Features</a>
-        <a href="#" class="footer-link">How it works</a>
-        <a href="#" class="footer-link">Retailer demo</a>
-        <a href="#" class="footer-link">FAQ</a>
+        <a href="#features" class="footer-link">Features</a>
+        <a href="#how-it-works" class="footer-link">How it works</a>
+        <a href="#retailer-demo" class="footer-link">Retailer demo</a>
+        <a href="#faq" class="footer-link">FAQ</a>
       </div>
       <div class="footer-col">
         <h5 class="footer-col-title">LEGAL</h5>
-        <a href="#" class="footer-link">Privacy Policy</a>
-        <a href="#" class="footer-link">Terms of Use</a>
-        <a href="#" class="footer-link">Security</a>
+        <a href="privacy-policy.html" class="footer-link">Privacy Policy</a>
+        <a href="terms-of-use.html" class="footer-link">Terms of Use</a>
+        <a href="security.html" class="footer-link">Security</a>
       </div>
       <div class="footer-col">
         <h5 class="footer-col-title">SOCIALS</h5>
-        <a href="#" class="footer-link">Twitter / X</a>
-        <a href="#" class="footer-link">Instagram</a>
-        <a href="#" class="footer-link">LinkedIn</a>
+        <a href="https://x.com/QueueReceipts" target="_blank" rel="noopener" class="footer-link">Twitter / X</a>
+        <a href="https://www.instagram.com/queuereceipts/" target="_blank" rel="noopener" class="footer-link">Instagram</a>
+        <a href="https://www.linkedin.com/company/queuereceipts" target="_blank" rel="noopener" class="footer-link">LinkedIn</a>
       </div>
     </div>
     <div class="footer-bottom">
@@ -394,5 +409,6 @@
   </div>
 </footer>
 
+<script src="scripts.js"></script>
 </body>
 </html>
