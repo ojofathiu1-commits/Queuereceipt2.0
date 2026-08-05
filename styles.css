@@ -142,7 +142,7 @@ a {
 .hero-content {
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 19.8px;
 }
 
 /* Badge */
@@ -202,13 +202,14 @@ a {
   height: 31.79px;
   background: #F7D69B;
   border-radius: 6px;
-  transform: rotate(1.2deg);
+  transform: rotate(-1.2deg);
   z-index: -1;
 }
 
 /* Paragraph */
 
 .hero-paragraph {
+  margin-top: 2.2px;
   font-weight: 400;
   font-size: 20px;
   line-height: 31px;
@@ -221,9 +222,79 @@ a {
 .hero-buttons {
   display: flex;
   flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 10.2px;
+}
+
+.store-badge {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
   align-items: center;
-  gap: 14px;
-  padding-top: 8px;
+  padding: 0.5px 20.5px;
+  gap: 11px;
+  height: 58px;
+  background: #161E34;
+  border: 1px solid #161E34;
+  border-radius: 13px;
+}
+
+.store-badge-apple {
+  width: 165.94px;
+}
+
+.store-badge-google {
+  width: 172.18px;
+}
+
+.store-badge-icon {
+  flex-shrink: 0;
+}
+
+.store-badge-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.store-badge-text-small {
+  font-weight: 500;
+  font-size: 11px;
+  line-height: 12px;
+  letter-spacing: 0.11px;
+  color: #FFFFFF;
+  opacity: 0.82;
+  white-space: nowrap;
+}
+
+.store-badge-text-bold {
+  font-weight: 700;
+  font-size: 17px;
+  line-height: 18px;
+  letter-spacing: -0.17px;
+  color: #FFFFFF;
+  white-space: nowrap;
+}
+
+.store-badge-light {
+  background: #FFFFFF;
+  border-color: #FFFFFF;
+}
+
+.store-badge-light .store-badge-text-small,
+.store-badge-light .store-badge-text-bold {
+  color: #161E34;
+}
+
+.hero-see-more {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 25px;
+  color: var(--color-dark-text);
 }
 
 .btn {
@@ -1180,7 +1251,7 @@ a {
   gap: 17.4px;
   width: 1144px;
   max-width: 1144px;
-  margin: 36px auto 0;
+  margin: 36px auto;
   padding: 80px 40px;
   background: linear-gradient(154.78deg, #1C2540 0%, #0E1525 100%);
   box-shadow: 0 40px 90px -40px rgba(22, 30, 52, 0.45);
@@ -1234,12 +1305,16 @@ a {
 .final-cta-btn-wrap {
   position: relative;
   z-index: 1;
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
   padding-top: 14.59px;
 }
 
 .final-cta-microcopy {
   position: relative;
   z-index: 1;
+  margin-top: 2.6px;
   font-weight: 400;
   font-size: 13.5px;
   line-height: 21px;
@@ -1880,6 +1955,17 @@ section[id].legal-section {
   }
 
   .btn {
+    width: 100%;
+  }
+
+  .store-badge {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .final-cta-btn-wrap {
+    flex-direction: column;
+    align-items: stretch;
     width: 100%;
   }
 
