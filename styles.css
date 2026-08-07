@@ -4,6 +4,16 @@
   --color-dark-text: #161E34;
   --color-accent: #F09E2D;
   --color-border: #E4E8F1;
+
+  /* Page gutters. The desktop comp centres a 1200px column inside 1512px
+     (156px each side) and a 1144px column for the wider-padded sections
+     (184px each side); the phone comp uses 20px. These interpolate linearly
+     between those two anchors so 641-1511px is a real layout instead of the
+     desktop padding surviving into a viewport that cannot hold it.
+       --gutter:      20px @640  ->  156px @1512
+       --gutter-wide: 20px @640  ->  184px @1512 */
+  --gutter: clamp(20px, calc(15.6vw - 79.84px), 156px);
+  --gutter-wide: clamp(20px, calc(18.81vw - 100.38px), 184px);
 }
 
 * {
@@ -12,15 +22,11 @@
   padding: 0;
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-}
+/* No `html { scroll-behavior: smooth }`: the engine's curve is not tunable and
+   Chrome's peaks at ~4.2x its own average speed, which on this page's longest
+   hop smears half a phone viewport past in a single frame. Anchor clicks are
+   animated in scripts.js instead (which also honours prefers-reduced-motion).
+   The horizontal scrollers further down keep their own scroll-behavior. */
 
 body {
   font-family: 'Switzer', sans-serif;
@@ -29,7 +35,12 @@ body {
 
 section[id],
 footer[id] {
-  scroll-margin-top: 95px;
+  /* --site-header-h is measured live in scripts.js rather than assumed: the
+     sticky header's real height can drift from a hardcoded guess (webfont
+     swap, safe-area insets), and a stale guess here means the section that
+     was just scrolled to lands partly under the header instead of below it.
+     The +20px is breathing room, not part of the header measurement itself. */
+  scroll-margin-top: calc(var(--site-header-h, 95px) + 20px);
 }
 
 a {
@@ -44,7 +55,7 @@ a {
   max-width: 1512px;
   margin: 0 auto;
   height: 75px;
-  padding: 0 156px;
+  padding: 0 var(--gutter);
   background: rgba(255, 255, 255, 0.82);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
@@ -76,18 +87,107 @@ a {
 }
 
 .nav-links {
+  position: relative;
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 28px;
+  gap: 4px;
 }
 
 .nav-links a {
+  position: relative;
+  z-index: 1;
+  padding: 8px 14px;
+  border-radius: 999px;
   font-weight: 600;
   font-size: 15.5px;
   line-height: 24px;
   letter-spacing: 0;
   color: var(--color-nav-text);
+  -webkit-tap-highlight-color: transparent;
+  /* Matches the pill's own duration/curve below so text color and the pill
+     arriving under it read as one movement, not two out-of-step ones. */
+  transition:
+    background-color 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* One shared pill glides between links instead of two backgrounds
+   cross-fading, so a section change reads as a single object moving. It is
+   injected by scripts.js -- .has-nav-pill marks that it is in play. */
+.nav-pill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 999px;
+  background-color: #FCEBCF;
+  box-shadow: 0 2px 8px -2px rgba(198, 127, 22, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  /* cubic-bezier(0.22, 1, 0.36, 1) ("expo-out") front-loads less hard than
+     the docking-nav curve this used to share: measured frame-by-frame, the
+     old (0.32, 0.72, 0, 1) curve covered ~95% of the travel by the halfway
+     point and then spent the second half creeping through the last few
+     px -- motion that looks finished well before transitionend actually
+     fires. This curve empties into a much shorter tail, and the shorter
+     duration keeps what tail remains under a couple of frames. */
+  transition:
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    width 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    height 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.22s ease;
+}
+
+.nav-pill-visible {
+  opacity: 1;
+}
+
+/* Set while the pill is repositioned without travel (first paint, resize,
+   fade-in at a new spot). */
+.nav-pill-instant {
+  transition: none;
+}
+
+/* Hover feedback is opt-in for real pointers only, so a tap on a touch
+   device never leaves a sticky :hover state behind. */
+@media (hover: hover) and (pointer: fine) {
+  .nav-links a:hover {
+    background-color: #F4F6FA;
+    color: var(--color-dark-text);
+    /* Snap in, ease back out -- the slower exit keeps the row from
+       flickering as the pointer sweeps across several pills. */
+    transition-duration: 0.13s;
+  }
+
+  /* The active pill must not be overridden by hover -- it stays lit for as
+     long as its section is the current one. */
+  .nav-links a.nav-link-active:hover {
+    background-color: #FCEBCF;
+    color: #C67F16;
+  }
+}
+
+.nav-links a.nav-link-active {
+  background-color: #FCEBCF;
+  color: #C67F16;
+}
+
+/* Fallback fill above is only for a pill-less nav; with the pill present it
+   would double up. Must outrank the :hover rule, hence the later position. */
+.nav-links.has-nav-pill a.nav-link-active,
+.nav-links.has-nav-pill a.nav-link-active:hover {
+  background-color: transparent;
+}
+
+.nav-links a:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-pill {
+    transition: opacity 0.15s ease;
+  }
 }
 
 .header-actions {
@@ -97,18 +197,80 @@ a {
   gap: 14px;
 }
 
+/* The two header actions are one primary/secondary pair, so they share a
+   hover vocabulary: identical lift, identical timing. Only the surface each
+   one lifts off differs -- neutral for the secondary, accent for the CTA.
+
+   Neither uses the nav pill's expo-out curve for the lift. Sampled
+   frame-by-frame, that curve puts a third of a 3px rise into the first frame
+   and creeps through the rest: correct for the pill's long lateral slide,
+   but a 3px vertical move under it reads as a teleport rather than a motion.
+   The curve below spreads the same travel over more frames. It stays on the
+   shadow, where a front-loaded bloom with a long tail is exactly right. */
+
 .request-demo {
+  /* Sized so the hover pill lands near the CTA's height instead of reading as
+     an undersized chip beside it. */
+  padding: 11px 18px;
+  border-radius: 999px;
   font-weight: 700;
   font-size: 15.5px;
   line-height: 24px;
   letter-spacing: 0;
   color: var(--color-dark-text);
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: inset 0 0 0 1px transparent;
+  /* Order is load-bearing: the :hover rules below override durations
+     positionally via transition-duration. */
+  transition:
+    transform 0.26s cubic-bezier(0.33, 0.8, 0.35, 1),
+    box-shadow 0.36s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .request-demo:hover {
+    transform: translateY(-3px);
+    background-color: #F4F6FA;
+    /* The inset ring gives the fill an edge -- without it the pill is an
+       edgeless smudge rather than a surface that rose off the header. */
+    box-shadow:
+      inset 0 0 0 1px var(--color-border),
+      0 1px 1px 0 rgba(22, 30, 52, 0.04),
+      0 6px 16px -6px rgba(22, 30, 52, 0.18);
+    /* Snap in, ease back out, matching the nav row: the slower exit keeps the
+       button the pointer just left settling as its neighbour rises. */
+    transition-duration: 0.19s, 0.32s, 0.2s;
+  }
+}
+
+/* "Request demo" owns #retailer-demo the way each nav link owns its section,
+   so it takes the nav's active pair. The travelling .nav-pill cannot come with
+   it -- that pill is measured inside .nav-links and this button lives in
+   .header-actions -- so the fill is painted locally here instead. */
+.request-demo.nav-link-active,
+.request-demo.nav-link-active:hover {
+  background-color: #FCEBCF;
+  color: #C67F16;
+  box-shadow: inset 0 0 0 1px transparent;
+  transform: none;
+}
+
+.request-demo:active {
+  transform: translateY(0);
+  transition-duration: 0.07s, 0.09s, 0.09s;
+}
+
+.request-demo:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 
 .get-app-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  position: relative;
   padding: 15px 26px;
   border-radius: 999px;
   background: var(--color-accent);
@@ -117,9 +279,116 @@ a {
   line-height: 24.8px;
   letter-spacing: 0;
   color: var(--color-dark-text);
+  -webkit-tap-highlight-color: transparent;
+  /* Three stacked casts, not one: a tight contact shadow that keeps the pill
+     attached to the header, a mid cast for body, and a wide ambient tint. The
+     single spread value this replaces collapsed all three into one hard slab
+     that read as an extruded plastic edge. The top inset is the lit edge that
+     makes it a physical surface. */
   box-shadow:
-    0 10px 24px -8px rgba(208, 131, 26, 0.6),
-    inset 0 -2px 0 0 rgba(130, 85, 10, 0.18);
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 0 rgba(130, 85, 10, 0.2),
+    0 1px 2px 0 rgba(140, 90, 12, 0.35),
+    0 5px 12px -4px rgba(208, 131, 26, 0.5),
+    0 14px 30px -12px rgba(208, 131, 26, 0.55);
+  transition:
+    transform 0.26s cubic-bezier(0.33, 0.8, 0.35, 1),
+    box-shadow 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .get-app-btn:hover {
+    transform: translateY(-3px);
+    /* Lifting off a surface softens the contact shadow and spreads the ambient
+       one -- moving both in the same direction is what made the old hover
+       state near-invisible next to its rest state. */
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.38),
+      inset 0 -1px 0 0 rgba(130, 85, 10, 0.2),
+      0 1px 2px 0 rgba(140, 90, 12, 0.28),
+      0 8px 18px -4px rgba(208, 131, 26, 0.55),
+      0 22px 42px -14px rgba(208, 131, 26, 0.62);
+    /* Shadow outlasts the lift on purpose: the pill arrives, then the light
+       catches up. Matched durations read as one flat state swap. */
+    transition-duration: 0.19s, 0.32s;
+  }
+}
+
+/* Pressed goes below the resting line, not merely back to it -- undoing the
+   hover lift alone gives a keyboard or touch press, which never lifted, no
+   feedback at all. The top inset flips from highlight to occlusion so the face
+   reads as pushed into the header, and the outer casts collapse to almost
+   nothing because a pressed button has no gap left to cast into.
+
+   Layer count and inset/outset order match the rest and hover lists exactly:
+   box-shadow interpolates per layer, and a list that changes length or flips a
+   layer between inset and outset snaps instead of animating. */
+.get-app-btn:active {
+  transform: translateY(1px);
+  box-shadow:
+    inset 0 2px 4px 0 rgba(130, 85, 10, 0.28),
+    inset 0 -1px 0 0 rgba(130, 85, 10, 0.3),
+    0 1px 1px 0 rgba(140, 90, 12, 0.42),
+    0 2px 5px -2px rgba(208, 131, 26, 0.42),
+    0 5px 12px -8px rgba(208, 131, 26, 0.4);
+  /* A press has to land under the finger, so no easing tail here. Release is
+     deliberately not specified: letting go drops back to the :hover rule and
+     inherits its slower durations, so the button snaps down and eases back up. */
+  transition-duration: 0.07s, 0.09s;
+}
+
+/* "Get the app" owns #final-cta, but it is already the loudest thing in the
+   header -- there is no louder fill to promote it to, and the palette has no
+   second accent to swap in. So being current is marked with the nav's own
+   active ink (#C67F16) drawn as an inner ring: same colour vocabulary as every
+   other active state, without restating the emphasis it already has.
+
+   The ring is the placeholder treatment, not a settled one -- swapping it is a
+   one-property change to the box-shadow below. Whatever replaces it belongs
+   here rather than on the button, because the button's own shadow stack is
+   fully spoken for by the rest/hover/press states: a sixth layer that appears
+   only on .nav-link-active would change the list length and make those three
+   transitions snap instead of interpolate. Riding inside the button, this also
+   inherits the hover lift and the press for free, so the scroll-driven state
+   and the pointer-driven ones compose instead of fighting. */
+.get-app-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 2px #C67F16;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.get-app-btn.nav-link-active::after {
+  opacity: 1;
+}
+
+.get-app-btn:focus-visible {
+  outline: 2px solid var(--color-dark-text);
+  outline-offset: 2px;
+}
+
+/* Drop the travel, keep the light: the shadow and fill changes still confirm
+   the hover and the press, they just stop moving anything. */
+@media (prefers-reduced-motion: reduce) {
+  .request-demo,
+  .request-demo:hover,
+  .request-demo:active,
+  .get-app-btn,
+  .get-app-btn:hover,
+  .get-app-btn:active {
+    transform: none;
+    transition:
+      box-shadow 0.2s ease,
+      background-color 0.2s ease;
+  }
+
+  .get-app-btn::after {
+    transition: opacity 0.15s ease;
+  }
 }
 
 /* ---- Section - HERO ---- */
@@ -128,7 +397,7 @@ a {
   width: 100%;
   max-width: 1512px;
   margin: 0 auto;
-  padding: 64px 156px 40px;
+  padding: 64px var(--gutter) 40px;
 }
 
 .hero-grid {
@@ -182,9 +451,12 @@ a {
 
 .hero-heading {
   font-weight: 800;
-  font-size: 76px;
-  line-height: 77.52px;
-  letter-spacing: -1.52px;
+  /* 42px @640 -> 76px @1512, the two comp anchors. Ratio units below so the
+     leading and tracking follow the size instead of being re-stated per
+     breakpoint (77.52/76 = 1.02, -1.52/76 = -0.02em). */
+  font-size: clamp(42px, calc(3.9vw + 17.04px), 76px);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
   color: var(--color-dark-text);
 }
 
@@ -455,7 +727,7 @@ a {
 
 .problem {
   background: #F3F5FB;
-  padding: 90px 156px;
+  padding: 90px var(--gutter);
 }
 
 .problem-container {
@@ -655,7 +927,7 @@ a {
 .features {
   margin-top: 88.56px;
   background: #161E34;
-  padding: 90px 156px;
+  padding: 90px var(--gutter);
 }
 
 .features-container {
@@ -698,7 +970,9 @@ a {
 
 .features-grid {
   display: grid;
-  grid-template-columns: 456.24px 325.88px 325.88px;
+  /* 1.4:1:1 is the comp's 456.24/325.88/325.88 exactly, as ratios so the
+     tracks shrink with the container instead of forcing it 1144px wide. */
+  grid-template-columns: 1.4fr 1fr 1fr;
   grid-template-rows: repeat(2, 1fr);
   gap: 18px;
   width: 100%;
@@ -881,6 +1155,20 @@ a {
   color: var(--color-nav-text);
 }
 
+/* Registered so the mobile edge fade below can be transitioned: an unregistered
+   custom property jumps between values, which would pop the fade in and out. */
+@property --tabs-fade-start {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --tabs-fade-end {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
 .segments-tabs {
   box-sizing: border-box;
   display: flex;
@@ -909,6 +1197,22 @@ a {
   line-height: 19px;
   color: var(--color-nav-text);
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Same pattern as .nav-links a: hover is opt-in for real pointers only, so a
+   tap on a touch device never leaves a sticky background behind. */
+@media (hover: hover) and (pointer: fine) {
+  .segment-tab:hover {
+    background-color: #F4F6FA;
+    transition-duration: 0.13s;
+  }
+
+  /* The active tab's accent fill must not be overridden by hover. */
+  .segment-tab-active:hover {
+    background: var(--color-accent);
+  }
 }
 
 .segment-tab-active {
@@ -929,6 +1233,13 @@ a {
   box-shadow: 0 18px 50px -22px rgba(22, 30, 52, 0.3);
   border-radius: 32px;
   overflow: hidden;
+}
+
+/* The class's own `display: flex` above outranks the UA stylesheet's
+   `[hidden] { display: none }` at equal specificity (author sheet loads
+   later), so a hidden panel would render anyway without this. */
+.segments-card[hidden] {
+  display: none;
 }
 
 .segments-phone-panel {
@@ -1004,7 +1315,9 @@ a {
 
 .retailer-cta {
   box-sizing: border-box;
-  width: 1144px;
+  /* Full-bleed child of body, so it carries its own gutter rather than
+     inheriting one. Resolves to exactly 1144px from 1512px up. */
+  width: calc(100% - 2 * var(--gutter-wide));
   max-width: 1144px;
   margin: 107.96px auto 0;
   padding: 64px 0;
@@ -1161,12 +1474,13 @@ a {
 .faq {
   margin-top: 90px;
   background: #F3F5FB;
-  padding: 110px 184px 90px;
+  padding: 110px var(--gutter-wide) 90px;
 }
 
 .faq-grid {
   display: grid;
-  grid-template-columns: 437.6px 656.4px;
+  /* 2:3 == the comp's 437.6/656.4 within the 1144px column. */
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
   gap: 50px;
   max-width: 1144px;
   margin: 0 auto;
@@ -1195,6 +1509,7 @@ a {
 }
 
 .faq-email {
+  font-weight: 700;
   color: var(--color-accent);
 }
 
@@ -1216,10 +1531,6 @@ a {
   border-bottom: 1px solid var(--color-border);
   background: transparent;
   cursor: pointer;
-}
-
-.faq-item-last {
-  border-bottom: none;
 }
 
 .faq-question {
@@ -1249,7 +1560,7 @@ a {
   flex-direction: column;
   align-items: center;
   gap: 17.4px;
-  width: 1144px;
+  width: calc(100% - 2 * var(--gutter-wide));
   max-width: 1144px;
   margin: 36px auto;
   padding: 80px 40px;
@@ -1328,7 +1639,7 @@ a {
 .site-footer {
   margin-top: 89.08px;
   border-top: 1px solid var(--color-border);
-  padding: 60px 156px 40px;
+  padding: 60px var(--gutter) 40px;
 }
 
 .legal-layout + .site-footer {
@@ -1346,7 +1657,8 @@ a {
 
 .footer-grid {
   display: grid;
-  grid-template-columns: 356.17px repeat(3, 222.61px);
+  /* 1.6:1:1:1 == the comp's 356.17/222.61 ratio. */
+  grid-template-columns: 1.6fr repeat(3, minmax(0, 1fr));
   gap: 40px;
   width: 100%;
 }
@@ -1388,11 +1700,61 @@ a {
 }
 
 .footer-link {
-  padding: 21.25px 0 6.22px;
+  padding: 5.25px 0 6.22px;
   font-weight: 500;
   font-size: 14.5px;
   line-height: 22px;
   color: var(--color-nav-text);
+  -webkit-tap-highlight-color: transparent;
+  /* line-height stays fixed in px (not em), so the size step below doesn't
+     nudge the row's own vertical rhythm -- only the glyphs grow. */
+  transition:
+    color 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    font-size 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.footer-col-title + .footer-link {
+  /* Figma puts the heading-to-list gap above the first link only (21.25px vs
+     5.25px). Given here as margin rather than padding so the 16px of it stays
+     outside the link's hit box and its focus ring -- as padding, hovering up
+     beside the heading lit the link and the ring reached the heading. */
+  margin-top: 16px;
+}
+
+/* Hover feedback is opt-in for real pointers only, so a tap never leaves a
+   sticky :hover state behind. */
+@media (hover: hover) and (pointer: fine) {
+  .footer-link:hover {
+    color: var(--color-accent);
+    font-size: 15.5px;
+    /* Snap in, ease back out, matching the nav row: the slower exit stops the
+       column strobing as the pointer crosses four links in a row. */
+    transition-duration: 0.14s, 0.16s;
+  }
+}
+
+.footer-link:focus-visible {
+  color: var(--color-accent);
+  font-size: 15.5px;
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Outside the hover query on purpose: on touch the press is the only feedback
+   there is, so it has to carry the whole confirmation on its own. */
+.footer-link:active {
+  color: var(--color-accent);
+  font-size: 15.5px;
+  transition-duration: 0.07s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer-link,
+  .footer-link:hover,
+  .footer-link:active {
+    transition: color 0.2s ease;
+  }
 }
 
 .footer-bottom {
@@ -1419,7 +1781,7 @@ a {
   width: 100%;
   max-width: 1512px;
   margin: 0 auto;
-  padding: 80px 156px 70px;
+  padding: 80px var(--gutter) 70px;
   background: #161E34;
   /* The glow below hangs 100px past the right edge. Without clipping it here
      (the same way .final-cta clips its own glow) it widens the initial
@@ -1511,6 +1873,81 @@ a {
   font-size: 14px;
   line-height: 22px;
   color: var(--color-dark-text);
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* The arrow keeps its own colour rather than inheriting the link's, so at rest
+   it stays the lighter nav grey under the near-black label. Both ends still
+   land on accent together. */
+.legal-back-arrow {
+  flex-shrink: 0;
+  color: var(--color-nav-text);
+  transition:
+    color 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.24s cubic-bezier(0.33, 0.8, 0.35, 1);
+}
+
+/* Hover feedback is opt-in for real pointers only, so a tap never leaves a
+   sticky :hover state behind. */
+@media (hover: hover) and (pointer: fine) {
+  .legal-back:hover {
+    color: var(--color-accent);
+    /* Snap in, ease back out, matching the nav and footer rows. */
+    transition-duration: 0.14s;
+  }
+
+  /* Only the arrow travels. The label holding still is what turns the move into
+     the gap stretching -- the arrow reading as leading the way back -- instead
+     of the whole lockup sliding off the sidebar's left rail. 3px is enough to
+     register at 16px and small enough that the rail still reads as straight. */
+  .legal-back:hover .legal-back-arrow {
+    color: var(--color-accent);
+    transform: translateX(-3px);
+    transition-duration: 0.14s, 0.18s;
+  }
+}
+
+/* Colour only, no nudge: the link has zero horizontal padding, so an arrow
+   pushed 3px left sits outside the border box and cuts through the ring. */
+.legal-back:focus-visible {
+  color: var(--color-accent);
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.legal-back:focus-visible .legal-back-arrow {
+  color: var(--color-accent);
+}
+
+/* Outside the hover query on purpose: on touch the press is the only feedback
+   there is, so it has to carry the whole confirmation on its own. */
+.legal-back:active {
+  color: var(--color-accent);
+  transition-duration: 0.07s;
+}
+
+.legal-back:active .legal-back-arrow {
+  color: var(--color-accent);
+  transform: translateX(-3px);
+  transition-duration: 0.07s;
+}
+
+/* Drop the travel, keep the colour: accent alone still confirms both states. */
+@media (prefers-reduced-motion: reduce) {
+  .legal-back,
+  .legal-back:hover,
+  .legal-back:active {
+    transition: color 0.2s ease;
+  }
+
+  .legal-back-arrow,
+  .legal-back:hover .legal-back-arrow,
+  .legal-back:active .legal-back-arrow {
+    transform: none;
+    transition: color 0.2s ease;
+  }
 }
 
 .legal-sidebar-title {
@@ -1874,11 +2311,80 @@ section[id].legal-section {
 }
 
 .mobile-nav a {
+  position: relative;
   padding: 16px 24px;
   font-weight: 600;
   font-size: 16px;
   color: var(--color-nav-text);
   border-bottom: 1px solid var(--color-border);
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 0.26s cubic-bezier(0.32, 0.72, 0, 1),
+    color 0.26s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* A stacked drawer has no room for a travelling pill, so the active row gets
+   an accent rail that expands in place instead. */
+.mobile-nav a::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 3px;
+  background-color: #C67F16;
+  transform: scaleY(0);
+  transition: transform 0.26s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.mobile-nav a.nav-link-active::before {
+  transform: scaleY(1);
+}
+
+.mobile-nav a.nav-link-active {
+  background-color: #FCEBCF;
+  color: #C67F16;
+}
+
+/* Touch has no hover, so the press itself carries the feedback. */
+.mobile-nav a:active {
+  background-color: #F4F6FA;
+}
+
+.mobile-nav a.nav-link-active:active {
+  background-color: #FCEBCF;
+}
+
+.mobile-nav a:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -3px;
+}
+
+@keyframes nav-drawer-item-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+.mobile-nav.mobile-nav-open a {
+  animation: nav-drawer-item-in 0.28s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+.mobile-nav.mobile-nav-open a:nth-child(2) { animation-delay: 0.025s; }
+.mobile-nav.mobile-nav-open a:nth-child(3) { animation-delay: 0.05s; }
+.mobile-nav.mobile-nav-open a:nth-child(4) { animation-delay: 0.075s; }
+.mobile-nav.mobile-nav-open a:nth-child(5) { animation-delay: 0.1s; }
+.mobile-nav.mobile-nav-open a:nth-child(6) { animation-delay: 0.125s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-nav.mobile-nav-open a {
+    animation: none;
+  }
+
+  .mobile-nav a::before {
+    transition: none;
+  }
 }
 
 .mobile-nav-demo {
@@ -1887,6 +2393,166 @@ section[id].legal-section {
 }
 
 /* ---- Mobile breakpoint ---- */
+
+/* ---- Tablet / small laptop -----------------------------------------------
+   The comp only ever specified 1512px and 390px, so everything between 641px
+   and the desktop max-widths used to render at desktop size in a viewport that
+   could not hold it. The gutters above are fluid; these two blocks are for the
+   places where a column count, not a width, is what has to change.
+   Two thresholds because they are two different constraints:
+     1199px - the header row is intrinsically 871px (logo + 5 links + 2 CTAs)
+              plus 56px inner padding plus gutters; below ~1200 the nav and the
+              CTAs touch, so it folds into the existing hamburger instead.
+     1023px - the side-by-side sections stop holding their content: the hero's
+              phone frame is a fixed 300px and its column falls under that.
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 1199px) {
+
+  .nav-links {
+    display: none;
+  }
+
+  .menu-toggle {
+    display: flex;
+  }
+}
+
+/* The comp's fixed .features-grid height only holds while the tracks are at
+   their 1512px size; any narrower and the card copy wraps taller than the box,
+   spilling the bottom row into the section padding. Released as soon as the
+   tracks start shrinking, i.e. below the 1512px max-width. */
+@media (max-width: 1511px) {
+
+  .features-grid {
+    height: auto;
+  }
+}
+
+/* The hero's own threshold, higher than the one below: its right column holds
+   a fixed 300px phone frame plus the floating cards, which are positioned in
+   percentages of that column and overlap the phone by design. Under roughly
+   500px of column the cards stop clearing the phone screen and land on top of
+   the receipt. 1280px is the narrowest viewport that still leaves 500px after
+   the gutters, so below it the hero stacks and the graphic keeps its desktop
+   width -- and therefore its card geometry -- centred. */
+@media (min-width: 641px) and (max-width: 1279px) {
+
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 44px;
+  }
+
+  .hero-graphic {
+    max-width: 575px;
+    margin: 0 auto;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1023px) {
+
+  /* Problem / how it works */
+
+  /* Two up, with the odd third keeping the same width rather than growing to
+     fill its row -- .hiw-step's image is width:100% and stretches if it does. */
+  .problem-cards,
+  .hiw-steps {
+    flex-wrap: wrap;
+  }
+
+  .problem-card {
+    flex: 0 1 calc(50% - 10px);
+  }
+
+  .hiw-step {
+    flex: 0 1 calc(50% - 12px);
+  }
+
+  /* Features: the tall money card goes full width, the rest become 2x2. */
+
+  /* height: auto because the narrower tracks wrap the card copy onto more
+     lines; the desktop rule's fixed height only holds at desktop widths. */
+  .features-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: none;
+    height: auto;
+  }
+
+  .feature-card-money {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  .feature-card-2 {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .feature-card-3 {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .feature-card-4 {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  .feature-card-5 {
+    grid-column: 2;
+    grid-row: 3;
+  }
+
+  /* Segments */
+
+  .segments-card {
+    flex-direction: column;
+  }
+
+  .segments-phone-panel {
+    width: 100%;
+    min-height: 0;
+    padding: 32px;
+  }
+
+  .segments-content {
+    padding: 32px;
+  }
+
+  /* Retailer CTA + FAQ */
+
+  .retailer-cta-grid {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
+  .faq-grid {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
+  /* Footer: brand across the top, the three link lists under it. */
+
+  .footer-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 36px 24px;
+  }
+
+  .footer-brand {
+    grid-column: 1 / -1;
+  }
+
+  /* Legal pages: the sidebar stays sticky (the docked-bar behaviour is a
+     phone-only mode), it just stops eating the content column. */
+
+  .legal-layout {
+    gap: 40px;
+  }
+
+  .legal-sidebar {
+    width: 220px;
+  }
+}
 
 @media (max-width: 640px) {
 
@@ -1922,7 +2588,7 @@ section[id].legal-section {
 
   section[id],
   footer[id] {
-    scroll-margin-top: 68px;
+    scroll-margin-top: calc(var(--site-header-h, 72px) + 20px);
   }
 
   /* Hero */
@@ -2132,14 +2798,60 @@ section[id].legal-section {
     line-height: 25px;
   }
 
+  /* The row overflows here (3 tabs, ~350px of space) and the scrollbar is
+     hidden, so the only thing telling a reader that "Retailers" exists is the
+     soft edge. The cue is a mask rather than an overlay because an absolutely
+     positioned overlay inside a scroll container scrolls away with the
+     content; a mask stays pinned to the visible edge. scripts.js sizes the two
+     fades from the scroll position so neither one ever hints at content that
+     isn't there. */
   .segments-tabs {
     max-width: 100%;
     overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
     scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 var(--tabs-fade-start, 0px),
+      #000 calc(100% - var(--tabs-fade-end, 0px)),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 var(--tabs-fade-start, 0px),
+      #000 calc(100% - var(--tabs-fade-end, 0px)),
+      transparent 100%
+    );
+    /* The mask is clipped to the border box, which would drop the pill's outer
+       shadow; no-clip keeps it painting. */
+    -webkit-mask-clip: no-clip;
+    mask-clip: no-clip;
+    transition:
+      --tabs-fade-start 0.18s ease,
+      --tabs-fade-end 0.18s ease;
+  }
+
+  .segments-tabs-fade-start {
+    --tabs-fade-start: 36px;
+  }
+
+  .segments-tabs-fade-end {
+    --tabs-fade-end: 36px;
   }
 
   .segments-tabs::-webkit-scrollbar {
     display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .segments-tabs {
+      scroll-behavior: auto;
+      transition: none;
+    }
   }
 
   .segment-tab {
@@ -2253,7 +2965,9 @@ section[id].legal-section {
 
   .footer-grid {
     grid-template-columns: 1fr 1fr;
-    gap: 28px 20px;
+    /* Comp: two 124px columns with the right one at left:150px, and a second
+       row at top:244.37px under a 218.3px first row -- 26px both ways. */
+    gap: 26px;
   }
 
   .footer-desc {

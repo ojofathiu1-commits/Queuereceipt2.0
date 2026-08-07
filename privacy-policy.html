@@ -58,7 +58,12 @@
 <div class="legal-layout">
   <aside class="legal-sidebar">
     <a href="index.html#footer" class="legal-back">
-      <img src="images/icon-arrow-left.svg" alt="" width="16" height="16">
+      <!-- Inlined rather than <img src>: an SVG loaded as an image resolves
+           currentColor against its own document, not this page, so the hover
+           colour could never reach the stroke. -->
+      <svg class="legal-back-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M12.6666 8.00065H3.33331M3.33331 8.00065L7.99998 12.6673M3.33331 8.00065L7.99998 3.33398" stroke="currentColor" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
       Back to home
     </a>
     <span class="legal-sidebar-title">CONTENTS</span>

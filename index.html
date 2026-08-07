@@ -251,11 +251,11 @@
     <p class="segments-paragraph">Built for everyone with receipts — whoever you are and however you shop.</p>
   </div>
   <div class="segments-tabs">
-    <button class="segment-tab segment-tab-active">Everyday shoppers</button>
-    <button class="segment-tab">Freelancers &amp; SMBs</button>
-    <button class="segment-tab">Retailers</button>
+    <button class="segment-tab segment-tab-active" data-segment="shoppers">Everyday shoppers</button>
+    <button class="segment-tab" data-segment="freelancers">Freelancers &amp; SMBs</button>
+    <button class="segment-tab" data-segment="retailers">Retailers</button>
   </div>
-  <div class="segments-card">
+  <div class="segments-card" data-segment-panel="shoppers">
     <div class="segments-phone-panel">
       <div class="segments-phone-frame">
         <img src="images/segments-phone.png" alt="QueueReceipts app showing an itemised receipt with totals and VAT" width="218" height="472">
@@ -280,6 +280,64 @@
         <li class="checklist-item">
           <img src="images/icon-checklist.svg" alt="" width="24" height="24">
           <span>A clear view of spending across multiple currencies</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="segments-card" data-segment-panel="freelancers" hidden>
+    <div class="segments-phone-panel">
+      <div class="segments-phone-frame">
+        <img src="images/second screen .png" alt="QueueReceipts app showing an expense overview with a spending chart and categories" width="218" height="472">
+      </div>
+    </div>
+    <div class="segments-content">
+      <h3 class="segments-title">Expense records you can rely on.</h3>
+      <p class="segments-card-paragraph">Convert paper receipts into clean, categorised, export-ready records, making reconciliation and tax preparation faster and more accurate.</p>
+      <ul class="segments-checklist">
+        <li class="checklist-item">
+          <img src="images/icon-checklist.svg" alt="" width="24" height="24">
+          <span>Separate business and personal spending automatically</span>
+        </li>
+        <li class="checklist-item">
+          <img src="images/icon-checklist.svg" alt="" width="24" height="24">
+          <span>Export accurate reports for tax and reconciliation</span>
+        </li>
+        <li class="checklist-item">
+          <img src="images/icon-checklist.svg" alt="" width="24" height="24">
+          <span>Capture VAT and totals with line-level accuracy.</span>
+        </li>
+        <li class="checklist-item">
+          <img src="images/icon-checklist.svg" alt="" width="24" height="24">
+          <span>Maintain an audit-ready record with no extra effort</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="segments-card" data-segment-panel="retailers" hidden>
+    <div class="segments-phone-panel">
+      <div class="segments-phone-frame">
+        <img src="images/3rd screen.png" alt="QueueReceipts app showing receipt details" width="218" height="472">
+      </div>
+    </div>
+    <div class="segments-content">
+      <h3 class="segments-title">Digital receipts your customers can trust.</h3>
+      <p class="segments-card-paragraph">Give customers a QR-code digital receipt that goes straight to their secure vault, reducing printing costs and improving the post-purchase experience.</p>
+      <ul class="segments-checklist">
+        <li class="checklist-item">
+          <img src="images/icon-checklist.svg" alt="" width="24" height="24">
+          <span>Reduce thermal printing costs and paper waste</span>
+        </li>
+        <li class="checklist-item">
+          <img src="images/icon-checklist.svg" alt="" width="24" height="24">
+          <span>Deliver receipts instantly through secure, single-use QR codes</span>
+        </li>
+        <li class="checklist-item">
+          <img src="images/icon-checklist.svg" alt="" width="24" height="24">
+          <span>Modernise checkout with no new hardware required</span>
+        </li>
+        <li class="checklist-item">
+          <img src="images/icon-checklist.svg" alt="" width="24" height="24">
+          <span>Offer a more convenient, sustainable experience</span>
         </li>
       </ul>
     </div>
@@ -367,7 +425,7 @@
         <span class="faq-question">Can I search old receipts?</span>
         <img src="images/icon-plus.svg" alt="" width="30" height="30">
       </button>
-      <button class="faq-item faq-item-last" aria-expanded="false">
+      <button class="faq-item" aria-expanded="false">
         <span class="faq-question">Is my data private and secure?</span>
         <img src="images/icon-plus.svg" alt="" width="30" height="30">
       </button>
