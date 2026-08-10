@@ -7,10 +7,10 @@ document.addEventListener('DOMContentLoaded', function () {
    * legal-page docking bar's spacer earlier is possible here too.
    * ------------------------------------------------------------------ */
 
-  var siteHeader = document.querySelector('.header-nav');
-  var applyHeaderHeight = function () {
+  const siteHeader = document.querySelector('.header-nav');
+  const applyHeaderHeight = function () {
     if (!siteHeader) return;
-    var h = Math.round(siteHeader.getBoundingClientRect().height);
+    const h = Math.round(siteHeader.getBoundingClientRect().height);
     if (h) document.documentElement.style.setProperty('--site-header-h', h + 'px');
   };
 
@@ -40,8 +40,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /* Hard ceiling on a flight, so anything that has to outlast one (the two
      scrollspy locks below) can be sized off a real number instead of a guess. */
-  var SCROLL_MAX_MS = 1500;
-  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const SCROLL_MAX_MS = 1500;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   /* cubic-bezier(0.28, 0.06, 0.35, 1), chosen by measuring candidates rather
      than reading control points. Symmetric in/out curves (sine, quad) hold
@@ -50,14 +50,14 @@ document.addEventListener('DOMContentLoaded', function () {
      these distances -- outQuint measured 383px/frame against native's 323.
      This one keeps quad's peak (2.0x mean) with a ~50% longer settle, so the
      page arrives instead of halting. */
-  var easeScroll = (function (x1, y1, x2, y2) {
-    var cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
-    var cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+  const easeScroll = (function (x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
     return function (x) {
-      var t = x, e, d;
+      let t = x, e, d;
       // Monotonic and well-conditioned for these control points, so Newton
       // alone converges; no bisection fallback needed.
-      for (var i = 0; i < 6; i++) {
+      for (let i = 0; i < 6; i++) {
         e = ((ax * t + bx) * t + cx) * t - x;
         if (Math.abs(e) < 1e-4) break;
         d = (3 * ax * t + 2 * bx) * t + cx;
@@ -75,12 +75,12 @@ document.addEventListener('DOMContentLoaded', function () {
      travel time matches what native smooth-scroll took at every real
      distance on this site (300px -> 450ms, 5670 -> 1.20s, 9368 -> 1.50s);
      only the speed profile within that time changed. */
-  var scrollDuration = function (dist) {
+  const scrollDuration = function (dist) {
     return Math.max(450, Math.min(16 * Math.sqrt(Math.abs(dist)), SCROLL_MAX_MS));
   };
 
-  var maxScrollTop = function () {
-    var de = document.documentElement;
+  const maxScrollTop = function () {
+    const de = document.documentElement;
     return Math.max(0, de.scrollHeight - de.clientHeight);
   };
 
@@ -88,20 +88,20 @@ document.addEventListener('DOMContentLoaded', function () {
      the viewport top, less its own scroll-margin-top. Read from the computed
      style rather than recomputed here, so the CSS stays the single source of
      the header offset and the landing position cannot drift from it. */
-  var anchorTargetY = function (el) {
-    var margin = parseFloat(getComputedStyle(el).scrollMarginTop);
-    var y = el.getBoundingClientRect().top + window.pageYOffset -
+  const anchorTargetY = function (el) {
+    const margin = parseFloat(getComputedStyle(el).scrollMarginTop);
+    const y = el.getBoundingClientRect().top + window.pageYOffset -
       (isNaN(margin) ? 0 : margin);
     return Math.max(0, Math.min(Math.round(y), maxScrollTop()));
   };
 
-  var anchorScrolling = false;
-  var anchorFrame = 0;
-  var pendingFocus = null;
+  let anchorScrolling = false;
+  let anchorFrame = 0;
+  let pendingFocus = null;
 
-  var isAnchorScrolling = function () { return anchorScrolling; };
+  const isAnchorScrolling = function () { return anchorScrolling; };
 
-  var finishAnchorScroll = function () {
+  const finishAnchorScroll = function () {
     if (anchorFrame) { cancelAnimationFrame(anchorFrame); anchorFrame = 0; }
     anchorScrolling = false;
 
@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function () {
        or screen-reader user is left reading from wherever they were. Deferred
        to the end so the focus ring does not appear mid-flight, and the
        tabindex is withdrawn on blur so sections never become tab stops. */
-    var target = pendingFocus;
+    const target = pendingFocus;
     pendingFocus = null;
     if (target) {
       if (!target.hasAttribute('tabindex')) {
@@ -128,11 +128,11 @@ document.addEventListener('DOMContentLoaded', function () {
     window.dispatchEvent(new CustomEvent('anchorscrollend'));
   };
 
-  var scrollToY = function (y) {
+  const scrollToY = function (y) {
     if (anchorFrame) { cancelAnimationFrame(anchorFrame); anchorFrame = 0; }
 
-    var start = window.pageYOffset;
-    var dist = y - start;
+    const start = window.pageYOffset;
+    const dist = y - start;
 
     if (reduceMotion.matches || Math.abs(dist) < 2) {
       window.scrollTo({ top: y, behavior: 'instant' });
@@ -140,15 +140,15 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
 
-    var dur = scrollDuration(dist);
+    const dur = scrollDuration(dist);
     /* Stamped now, not on the first frame: starting the clock inside rAF
        spends that frame at progress 0, which reads as a beat of lag between
        the click and anything moving. */
-    var t0 = performance.now();
+    const t0 = performance.now();
     anchorScrolling = true;
 
-    var step = function () {
-      var p = Math.min(1, (performance.now() - t0) / dur);
+    const step = function () {
+      const p = Math.min(1, (performance.now() - t0) / dur);
       window.scrollTo({ top: start + dist * easeScroll(p), behavior: 'instant' });
       if (p < 1) anchorFrame = requestAnimationFrame(step);
       else finishAnchorScroll();
@@ -157,14 +157,14 @@ document.addEventListener('DOMContentLoaded', function () {
     anchorFrame = requestAnimationFrame(step);
   };
 
-  var cancelAnchorScroll = function () {
+  const cancelAnchorScroll = function () {
     if (anchorScrolling) finishAnchorScroll();
   };
 
   /* A real gesture always wins over an in-flight programmatic scroll. Only
      keys that actually scroll count: Tab and Enter are how a keyboard user
      reaches and fires the link in the first place. */
-  var SCROLL_KEYS = {
+  const SCROLL_KEYS = {
     ArrowUp: 1, ArrowDown: 1, PageUp: 1, PageDown: 1,
     Home: 1, End: 1, ' ': 1, Spacebar: 1
   };
@@ -185,14 +185,14 @@ document.addEventListener('DOMContentLoaded', function () {
     if (e.defaultPrevented || e.button !== 0) return;
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
 
-    var link = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+    const link = e.target && e.target.closest ? e.target.closest('a[href]') : null;
     if (!link) return;
 
-    var href = link.getAttribute('href');
+    const href = link.getAttribute('href');
     if (!href || href.charAt(0) !== '#') return;
 
-    var id = href.slice(1);
-    var target = id ? document.getElementById(id) : null;
+    const id = href.slice(1);
+    const target = id ? document.getElementById(id) : null;
     // A dangling anchor is left to the browser rather than silently swallowed.
     if (id && !target) return;
 
@@ -207,13 +207,13 @@ document.addEventListener('DOMContentLoaded', function () {
     if (id && location.hash !== href) history.pushState(null, '', href);
   });
 
-  var menuToggle = document.querySelector('.menu-toggle');
-  var mobileNav = document.getElementById('mobile-nav');
-  var onMenuToggle = null;
+  const menuToggle = document.querySelector('.menu-toggle');
+  const mobileNav = document.getElementById('mobile-nav');
+  let onMenuToggle = null;
 
   if (menuToggle && mobileNav) {
     menuToggle.addEventListener('click', function () {
-      var isOpen = mobileNav.classList.toggle('mobile-nav-open');
+      const isOpen = mobileNav.classList.toggle('mobile-nav-open');
       menuToggle.classList.toggle('menu-toggle-open', isOpen);
       menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
       menuToggle.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
@@ -237,10 +237,10 @@ document.addEventListener('DOMContentLoaded', function () {
    * been built yet (e.g. Retailers) is inert rather than showing nothing.
    * ------------------------------------------------------------------ */
 
-  var segmentTabs = Array.prototype.slice.call(document.querySelectorAll('.segment-tab'));
-  var segmentPanels = Array.prototype.slice.call(document.querySelectorAll('[data-segment-panel]'));
+  const segmentTabs = Array.prototype.slice.call(document.querySelectorAll('.segment-tab'));
+  const segmentPanels = Array.prototype.slice.call(document.querySelectorAll('[data-segment-panel]'));
 
-  var segmentTabsRow = document.querySelector('.segments-tabs');
+  const segmentTabsRow = document.querySelector('.segments-tabs');
 
   /* ---- overflow affordance -------------------------------------------- *
    * On mobile the row is a hidden-scrollbar horizontal scroller and the last
@@ -250,10 +250,10 @@ document.addEventListener('DOMContentLoaded', function () {
    * so the mask stays fully opaque there.
    * ---------------------------------------------------------------------- */
 
-  var syncSegmentFades = function () {
+  const syncSegmentFades = function () {
     if (!segmentTabsRow) return;
-    var max = segmentTabsRow.scrollWidth - segmentTabsRow.clientWidth;
-    var left = segmentTabsRow.scrollLeft;
+    const max = segmentTabsRow.scrollWidth - segmentTabsRow.clientWidth;
+    const left = segmentTabsRow.scrollLeft;
     // 1px of slack: fractional scrollLeft otherwise leaves a fade at the end.
     segmentTabsRow.classList.toggle('segments-tabs-fade-start', max > 1 && left > 1);
     segmentTabsRow.classList.toggle('segments-tabs-fade-end', max > 1 && left < max - 1);
@@ -261,15 +261,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /* Keeps a tab that was activated without being touched (deep link, keyboard,
      a future programmatic switch) from staying parked out of sight. */
-  var revealSegmentTab = function (tab, instant) {
+  const revealSegmentTab = function (tab, instant) {
     if (!segmentTabsRow || !tab) return;
-    var max = segmentTabsRow.scrollWidth - segmentTabsRow.clientWidth;
+    const max = segmentTabsRow.scrollWidth - segmentTabsRow.clientWidth;
     if (max <= 0) return;
 
-    var rowRect = segmentTabsRow.getBoundingClientRect();
-    var tabRect = tab.getBoundingClientRect();
-    var center = (tabRect.left - rowRect.left) + segmentTabsRow.scrollLeft + tabRect.width / 2;
-    var target = Math.max(0, Math.min(center - rowRect.width / 2, max));
+    const rowRect = segmentTabsRow.getBoundingClientRect();
+    const tabRect = tab.getBoundingClientRect();
+    const center = (tabRect.left - rowRect.left) + segmentTabsRow.scrollLeft + tabRect.width / 2;
+    const target = Math.max(0, Math.min(center - rowRect.width / 2, max));
 
     if (Math.abs(target - segmentTabsRow.scrollLeft) < 1) return;
     // No behavior passed for the animated case: the container's CSS
@@ -278,7 +278,7 @@ document.addEventListener('DOMContentLoaded', function () {
   };
 
   if (segmentTabsRow) {
-    var fadeFrame = 0;
+    let fadeFrame = 0;
     segmentTabsRow.addEventListener('scroll', function () {
       if (fadeFrame) return;
       fadeFrame = requestAnimationFrame(function () {
@@ -295,8 +295,8 @@ document.addEventListener('DOMContentLoaded', function () {
   if (segmentTabs.length && segmentPanels.length) {
     segmentTabs.forEach(function (tab) {
       tab.addEventListener('click', function () {
-        var id = tab.getAttribute('data-segment');
-        var panel = segmentPanels.filter(function (p) { return p.getAttribute('data-segment-panel') === id; })[0];
+        const id = tab.getAttribute('data-segment');
+        const panel = segmentPanels.filter(function (p) { return p.getAttribute('data-segment-panel') === id; })[0];
         if (!panel) return;
 
         segmentTabs.forEach(function (t) { t.classList.toggle('segment-tab-active', t === tab); });
@@ -317,14 +317,14 @@ document.addEventListener('DOMContentLoaded', function () {
      should light up while the reader is inside it. They are collected here
      rather than styled separately so one pass drives every "you are here"
      state in the header. */
-  var homeNavLinks = Array.prototype.slice.call(
+  const homeNavLinks = Array.prototype.slice.call(
     document.querySelectorAll(
       '.nav-links a, .request-demo, .get-app-btn, .mobile-nav a'
     )
   );
 
   if (homeNavLinks.length) {
-    var homeSections = homeNavLinks
+    const homeSections = homeNavLinks
       .map(function (link) { return document.getElementById(link.getAttribute('href').slice(1)); })
       .filter(function (section, i, arr) { return section && arr.indexOf(section) === i; });
 
@@ -332,8 +332,8 @@ document.addEventListener('DOMContentLoaded', function () {
       /* The desktop row's active fill is one shared element that travels
          between links; the CSS only knows how to animate it, the geometry
          has to be measured here. */
-      var homeNavRow = document.querySelector('.nav-links');
-      var navPill = null;
+      const homeNavRow = document.querySelector('.nav-links');
+      let navPill = null;
 
       if (homeNavRow) {
         navPill = document.createElement('span');
@@ -343,10 +343,10 @@ document.addEventListener('DOMContentLoaded', function () {
         homeNavRow.classList.add('has-nav-pill');
       }
 
-      var moveNavPill = function (animate) {
+      const moveNavPill = function (animate) {
         if (!navPill) return;
 
-        var target = homeNavRow.querySelector('a.nav-link-active');
+        const target = homeNavRow.querySelector('a.nav-link-active');
         /* offsetParent is null while the row is display:none (mobile). */
         if (!target || !target.offsetParent) {
           navPill.classList.remove('nav-pill-visible');
@@ -355,7 +355,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         /* Travelling in from nowhere would read as a swipe across the row,
            so a pill that is currently hidden is placed before it fades up. */
-        var jump = !animate || !navPill.classList.contains('nav-pill-visible');
+        const jump = !animate || !navPill.classList.contains('nav-pill-visible');
         if (jump) navPill.classList.add('nav-pill-instant');
 
         navPill.style.width = target.offsetWidth + 'px';
@@ -371,7 +371,7 @@ document.addEventListener('DOMContentLoaded', function () {
         navPill.classList.add('nav-pill-visible');
       };
 
-      var setHomeActive = function (id) {
+      const setHomeActive = function (id) {
         homeNavLinks.forEach(function (link) {
           link.classList.toggle('nav-link-active', link.getAttribute('href') === '#' + id);
         });
@@ -385,24 +385,24 @@ document.addEventListener('DOMContentLoaded', function () {
          unlinked ones lets the highlight go out where it should. Landmarks are
          in document order, so the walk can stop at the first one below the
          line; homeSections is in header order, hence membership not index. */
-      var homeLandmarks = Array.prototype.slice.call(
+      let homeLandmarks = Array.prototype.slice.call(
         document.querySelectorAll('section[id], footer[id]')
       ).filter(function (el, i, arr) {
         return arr.slice(0, i).every(function (prev) { return prev !== el; });
       });
-      var firstTracked = homeLandmarks.length;
+      let firstTracked = homeLandmarks.length;
       homeSections.forEach(function (s) {
-        var i = homeLandmarks.indexOf(s);
+        const i = homeLandmarks.indexOf(s);
         if (i !== -1 && i < firstTracked) firstTracked = i;
       });
       if (firstTracked > 0 && firstTracked < homeLandmarks.length) {
         homeLandmarks = homeLandmarks.slice(firstTracked);
       }
 
-      var currentHomeSectionId = function () {
-        var line = 100;
-        var current = null;
-        for (var i = 0; i < homeLandmarks.length; i++) {
+      const currentHomeSectionId = function () {
+        const line = 100;
+        let current = null;
+        for (let i = 0; i < homeLandmarks.length; i++) {
           if (homeLandmarks[i].getBoundingClientRect().top <= line) current = homeLandmarks[i];
           else break;
         }
@@ -412,10 +412,10 @@ document.addEventListener('DOMContentLoaded', function () {
         return current && homeSections.indexOf(current) !== -1 ? current.id : null;
       };
 
-      var homeTicking = false;
-      var updateHomeActive = function () {
+      let homeTicking = false;
+      const updateHomeActive = function () {
         homeTicking = false;
-        var id = currentHomeSectionId();
+        const id = currentHomeSectionId();
         if (id) {
           setHomeActive(id);
         } else {
@@ -433,9 +433,9 @@ document.addEventListener('DOMContentLoaded', function () {
          settling. Locking out the scroll listener for the duration of a
          click-initiated scroll makes the pill travel straight to the clicked
          target in one motion. */
-      var homeNavScrollLock = false;
-      var homeNavScrollLockTimer = null;
-      var releaseHomeNavScrollLock = function () {
+      let homeNavScrollLock = false;
+      let homeNavScrollLockTimer = null;
+      const releaseHomeNavScrollLock = function () {
         homeNavScrollLock = false;
         window.removeEventListener('anchorscrollend', releaseHomeNavScrollLock);
         if (homeNavScrollLockTimer) { clearTimeout(homeNavScrollLockTimer); homeNavScrollLockTimer = null; }
@@ -451,7 +451,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       homeNavLinks.forEach(function (link) {
         link.addEventListener('click', function () {
-          var id = link.getAttribute('href').slice(1);
+          const id = link.getAttribute('href').slice(1);
           if (!document.getElementById(id)) return;
           setHomeActive(id);
           homeNavScrollLock = true;
@@ -468,7 +468,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
       });
 
-      var navPillResizeTicking = false;
+      let navPillResizeTicking = false;
       window.addEventListener('resize', function () {
         if (navPillResizeTicking) return;
         navPillResizeTicking = true;
@@ -489,7 +489,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   document.querySelectorAll('.faq-item').forEach(function (item) {
     item.addEventListener('click', function () {
-      var isOpen = item.classList.contains('faq-item-open');
+      const isOpen = item.classList.contains('faq-item-open');
       document.querySelectorAll('.faq-item').forEach(function (other) {
         other.classList.remove('faq-item-open');
         other.setAttribute('aria-expanded', 'false');
@@ -509,29 +509,29 @@ document.addEventListener('DOMContentLoaded', function () {
    * each other or with the scroll position mid-frame.
    * ------------------------------------------------------------------ */
 
-  var tocNav = document.querySelector('.legal-toc');
-  var tocLinks = tocNav
+  const tocNav = document.querySelector('.legal-toc');
+  const tocLinks = tocNav
     ? Array.prototype.slice.call(tocNav.querySelectorAll('.legal-toc-link'))
     : [];
 
   if (!tocNav || !tocLinks.length) return;
 
-  var root = document.documentElement;
-  var header = document.querySelector('.header-nav');
-  var sentinel = document.querySelector('.legal-toc-sentinel');
-  var spacer = document.querySelector('.legal-toc-spacer');
-  var siteFooter = document.querySelector('.site-footer');
+  const root = document.documentElement;
+  const header = document.querySelector('.header-nav');
+  const sentinel = document.querySelector('.legal-toc-sentinel');
+  const spacer = document.querySelector('.legal-toc-spacer');
+  const siteFooter = document.querySelector('.site-footer');
 
-  var sections = tocLinks
+  const sections = tocLinks
     .map(function (link) { return document.getElementById(link.getAttribute('href').slice(1)); })
     .filter(Boolean);
 
   if (!sections.length) return;
 
-  var mobileQuery = window.matchMedia('(max-width: 640px)');
-  var isMobile = function () { return mobileQuery.matches; };
-  var userScrolled = false;
-  var viewport = window.visualViewport || null;
+  const mobileQuery = window.matchMedia('(max-width: 640px)');
+  const isMobile = function () { return mobileQuery.matches; };
+  let userScrolled = false;
+  const viewport = window.visualViewport || null;
 
   /* ---- viewport basis ------------------------------------------------ *
    * Everything below compares against getBoundingClientRect(), which is
@@ -543,12 +543,12 @@ document.addEventListener('DOMContentLoaded', function () {
    * everywhere and is unaffected by zoom.
    * -------------------------------------------------------------------- */
 
-  var viewportHeight = function () { return root.clientHeight || window.innerHeight; };
-  var maxScrollY = function () { return Math.max(0, root.scrollHeight - viewportHeight()); };
+  const viewportHeight = function () { return root.clientHeight || window.innerHeight; };
+  const maxScrollY = function () { return Math.max(0, root.scrollHeight - viewportHeight()); };
 
   // Treated as "the user is pinched in". Scale is fractional mid-gesture, so
   // the threshold has slack rather than testing !== 1.
-  var isZoomed = function () { return !!viewport && viewport.scale > 1.02; };
+  const isZoomed = function () { return !!viewport && viewport.scale > 1.02; };
 
   /* ---- measurement -------------------------------------------------- *
    * The in-flow bar and the docked bar are deliberately given the same box
@@ -556,10 +556,10 @@ document.addEventListener('DOMContentLoaded', function () {
    * spacer can never introduce a layout jump.
    * ------------------------------------------------------------------- */
 
-  var headerHeight = 72;
-  var barHeight = 59;
+  let headerHeight = 72;
+  let barHeight = 59;
 
-  var applyMetrics = function () {
+  const applyMetrics = function () {
     if (header) headerHeight = Math.round(header.offsetHeight) || headerHeight;
     root.style.setProperty('--legal-header-h', headerHeight + 'px');
 
@@ -577,25 +577,25 @@ document.addEventListener('DOMContentLoaded', function () {
   /* The line a section's top must reach to count as the current one. CSS
      owns the number via scroll-margin-top, so the highlight and the scroll
      landing position can never drift apart. */
-  var referenceLine = function () {
-    var margin = parseFloat(getComputedStyle(sections[0]).scrollMarginTop);
+  const referenceLine = function () {
+    const margin = parseFloat(getComputedStyle(sections[0]).scrollMarginTop);
     return (isNaN(margin) ? 100 : margin) + 4;
   };
 
   /* ---- horizontal auto-centering ------------------------------------ */
 
-  var centerLink = function (link, smooth) {
+  const centerLink = function (link, smooth) {
     // Never scroll the pill row while the user is pinching: the bar is under
     // their fingers and a programmatic sideways jump reads as the page
     // fighting them.
     if (!link || !isMobile() || isZoomed()) return;
-    var maxScroll = tocNav.scrollWidth - tocNav.clientWidth;
+    const maxScroll = tocNav.scrollWidth - tocNav.clientWidth;
     if (maxScroll <= 0) return;
 
-    var navRect = tocNav.getBoundingClientRect();
-    var linkRect = link.getBoundingClientRect();
-    var linkCenter = (linkRect.left - navRect.left) + tocNav.scrollLeft + linkRect.width / 2;
-    var target = Math.max(0, Math.min(linkCenter - navRect.width / 2, maxScroll));
+    const navRect = tocNav.getBoundingClientRect();
+    const linkRect = link.getBoundingClientRect();
+    const linkCenter = (linkRect.left - navRect.left) + tocNav.scrollLeft + linkRect.width / 2;
+    const target = Math.max(0, Math.min(linkCenter - navRect.width / 2, maxScroll));
 
     if (Math.abs(target - tocNav.scrollLeft) < 1) return;
     tocNav.scrollTo({ left: target, behavior: smooth === false ? 'instant' : 'smooth' });
@@ -603,14 +603,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /* ---- active section ------------------------------------------------ */
 
-  var activeId = null;
+  let activeId = null;
 
-  var setActive = function (id, smoothCenter) {
+  const setActive = function (id, smoothCenter) {
     if (!id || id === activeId) return;
     activeId = id;
-    var activeLink = null;
+    let activeLink = null;
     tocLinks.forEach(function (link) {
-      var on = link.getAttribute('href') === '#' + id;
+      const on = link.getAttribute('href') === '#' + id;
       link.classList.toggle('legal-toc-active', on);
       if (on) {
         activeLink = link;
@@ -622,8 +622,8 @@ document.addEventListener('DOMContentLoaded', function () {
     centerLink(activeLink, smoothCenter);
   };
 
-  var currentSectionId = function () {
-    var line = referenceLine();
+  const currentSectionId = function () {
+    const line = referenceLine();
 
     // At the very bottom of the document the last sections can never reach
     // the reading line, so honour the scroll end explicitly.
@@ -631,8 +631,8 @@ document.addEventListener('DOMContentLoaded', function () {
       return sections[sections.length - 1].id;
     }
 
-    var current = sections[0];
-    for (var i = 0; i < sections.length; i++) {
+    let current = sections[0];
+    for (let i = 0; i < sections.length; i++) {
       if (sections[i].getBoundingClientRect().top <= line) current = sections[i];
       else break;
     }
@@ -641,11 +641,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /* ---- docking + footer hide ----------------------------------------- */
 
-  var stuck = false;
-  var hidden = false;
-  var menuOpen = false;
+  let stuck = false;
+  let hidden = false;
+  let menuOpen = false;
 
-  var updateChrome = function () {
+  const updateChrome = function () {
     if (!isMobile()) {
       if (stuck) {
         stuck = false;
@@ -670,7 +670,7 @@ document.addEventListener('DOMContentLoaded', function () {
        into the article for the duration of the zoom, and because the spacer is
        withdrawn in the same frame the page underneath does not move at all. */
     if (sentinel && spacer) {
-      var shouldStick = sentinel.getBoundingClientRect().top <= headerHeight && !isZoomed();
+      const shouldStick = sentinel.getBoundingClientRect().top <= headerHeight && !isZoomed();
       if (shouldStick !== stuck) {
         stuck = shouldStick;
         // Both applied in the same frame: no intermediate layout is painted.
@@ -682,10 +682,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // Retire the bar once the footer owns the screen - there is nothing left
     // to navigate to. Asymmetric thresholds keep it from flickering when the
     // user lingers on the boundary.
-    var shouldHide = menuOpen;
+    let shouldHide = menuOpen;
     if (!shouldHide && siteFooter) {
-      var footerTop = siteFooter.getBoundingClientRect().top;
-      var vh = viewportHeight();
+      const footerTop = siteFooter.getBoundingClientRect().top;
+      const vh = viewportHeight();
       shouldHide = hidden ? footerTop < vh * 0.62 : footerTop < vh * 0.5;
     }
     if (shouldHide !== hidden) {
@@ -705,11 +705,11 @@ document.addEventListener('DOMContentLoaded', function () {
    * flies past on the way there.
    * --------------------------------------------------------------------- */
 
-  var spyMuted = false;
-  var muteTimer = null;
-  var pendingTarget = -1;
+  let spyMuted = false;
+  let muteTimer = null;
+  let pendingTarget = -1;
 
-  var unmute = function () {
+  const unmute = function () {
     if (!spyMuted) return;
     spyMuted = false;
     pendingTarget = -1;
@@ -718,7 +718,7 @@ document.addEventListener('DOMContentLoaded', function () {
     setActive(currentSectionId());
   };
 
-  var mute = function (targetY) {
+  const mute = function (targetY) {
     spyMuted = true;
     pendingTarget = targetY;
     clearTimeout(muteTimer);
@@ -729,9 +729,9 @@ document.addEventListener('DOMContentLoaded', function () {
     muteTimer = setTimeout(unmute, SCROLL_MAX_MS + 400);
   };
 
-  var ticking = false;
+  let ticking = false;
 
-  var update = function () {
+  const update = function () {
     updateChrome();
     if (spyMuted) {
       if (pendingTarget >= 0 && Math.abs(window.pageYOffset - pendingTarget) <= 2) unmute();
@@ -740,7 +740,7 @@ document.addEventListener('DOMContentLoaded', function () {
     setActive(currentSectionId());
   };
 
-  var onScroll = function () {
+  const onScroll = function () {
     if (ticking) return;
     ticking = true;
     requestAnimationFrame(function () {
@@ -771,7 +771,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }, { passive: true });
   });
 
-  var onResize = function () {
+  const onResize = function () {
     applyMetrics();
     update();
     centerLink(tocNav.querySelector('.legal-toc-active'), false);
@@ -789,9 +789,9 @@ document.addEventListener('DOMContentLoaded', function () {
    * ---------------------------------------------------------------------- */
 
   if (viewport) {
-    var settleTimer = null;
+    let settleTimer = null;
 
-    var onViewportChange = function () {
+    const onViewportChange = function () {
       onScroll();
       clearTimeout(settleTimer);
       settleTimer = setTimeout(function () {
@@ -809,7 +809,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // (a late font swap, iOS dynamic type, an orientation flip) re-syncs the
   // spacer directly, instead of relying on catching every possible cause.
   if (typeof ResizeObserver === 'function') {
-    var tocResizeObserver = new ResizeObserver(function () {
+    const tocResizeObserver = new ResizeObserver(function () {
       applyMetrics();
     });
     tocResizeObserver.observe(tocNav);
@@ -822,14 +822,14 @@ document.addEventListener('DOMContentLoaded', function () {
      All this adds is the instant highlight and the mute window. */
   tocLinks.forEach(function (link) {
     link.addEventListener('click', function () {
-      var id = link.getAttribute('href').slice(1);
-      var target = document.getElementById(id);
+      const id = link.getAttribute('href').slice(1);
+      const target = document.getElementById(id);
       if (!target) return;
 
       userScrolled = true;
       setActive(id);
 
-      var y = target.getBoundingClientRect().top + window.pageYOffset - referenceLine() + 4;
+      const y = target.getBoundingClientRect().top + window.pageYOffset - referenceLine() + 4;
       mute(Math.max(0, Math.min(Math.round(y), maxScrollY())));
     });
   });
@@ -847,13 +847,13 @@ document.addEventListener('DOMContentLoaded', function () {
    * produced the inconsistent landing positions.)
    * ---------------------------------------------------------------------- */
 
-  var pinToHash = function () {
+  const pinToHash = function () {
     if (userScrolled) return;
-    var id = location.hash.slice(1);
-    var target = id && document.getElementById(id);
+    const id = location.hash.slice(1);
+    const target = id && document.getElementById(id);
     if (!target || sections.indexOf(target) === -1) return;
 
-    var y = Math.max(0, Math.min(
+    const y = Math.max(0, Math.min(
       Math.round(target.getBoundingClientRect().top + window.pageYOffset - referenceLine() + 4),
       maxScrollY()
     ));
@@ -861,7 +861,7 @@ document.addEventListener('DOMContentLoaded', function () {
     setActive(id, false);
   };
 
-  var settle = function () {
+  const settle = function () {
     // Re-measure every time: a webfont swap or late image load can change the
     // bar's real height well after the first paint, and the spacer must track
     // it exactly or whatever comes right after the bar ends up underneath it.
