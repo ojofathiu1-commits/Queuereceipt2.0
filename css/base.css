@@ -1,0 +1,61 @@
+/* ---- Design tokens (from Figma) ---- */
+:root {
+  --color-nav-text: #46506A;
+  --color-dark-text: #161E34;
+  --color-accent: #F09E2D;
+  --color-border: #E4E8F1;
+
+  /* Page gutters. The desktop comp centres a 1200px column inside 1512px
+     (156px each side) and a 1144px column for the wider-padded sections
+     (184px each side); the phone comp uses 20px. These interpolate linearly
+     between those two anchors so 641-1511px is a real layout instead of the
+     desktop padding surviving into a viewport that cannot hold it.
+       --gutter:      20px @640  ->  156px @1512
+       --gutter-wide: 20px @640  ->  184px @1512 */
+  --gutter: clamp(20px, calc(15.6vw - 79.84px), 156px);
+  --gutter-wide: clamp(20px, calc(18.81vw - 100.38px), 184px);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* No `html { scroll-behavior: smooth }`: the engine's curve is not tunable and
+   Chrome's peaks at ~4.2x its own average speed, which on this page's longest
+   hop smears half a phone viewport past in a single frame. Anchor clicks are
+   animated in scripts.js instead (which also honours prefers-reduced-motion).
+   The horizontal scrollers further down keep their own scroll-behavior. */
+body {
+  font-family: 'Switzer', sans-serif;
+  color: var(--color-dark-text);
+}
+
+section[id],
+footer[id] {
+  /* --site-header-h is measured live in scripts.js rather than assumed: the
+     sticky header's real height can drift from a hardcoded guess (webfont
+     swap, safe-area insets), and a stale guess here means the section that
+     was just scrolled to lands partly under the header instead of below it.
+     The +20px is breathing room, not part of the header measurement itself. */
+  scroll-margin-top: calc(var(--site-header-h, 95px) + 20px);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+@media (max-width: 640px) {
+  html {
+      overflow-x: hidden;
+    }
+
+  section[id],
+    footer[id] {
+      scroll-margin-top: calc(var(--site-header-h, 72px) + 20px);
+    }
+
+}
+

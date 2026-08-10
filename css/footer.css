@@ -1,0 +1,186 @@
+/* ---- Footer - FOOTER ---- */
+.site-footer {
+  margin-top: 89.08px;
+  border-top: 1px solid var(--color-border);
+  padding: 60px var(--gutter) 40px;
+}
+
+.legal-layout + .site-footer {
+  margin-top: 0;
+}
+
+.footer-container {
+  display: flex;
+  flex-direction: column;
+  gap: 47.99px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 28px;
+}
+
+.footer-grid {
+  display: grid;
+  /* 1.6:1:1:1 == the comp's 356.17/222.61 ratio. */
+  grid-template-columns: 1.6fr repeat(3, minmax(0, 1fr));
+  gap: 40px;
+  width: 100%;
+}
+
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-logo img {
+  display: block;
+  width: 131px;
+  height: 46px;
+  object-fit: contain;
+}
+
+.footer-desc {
+  font-weight: 400;
+  font-size: 14.5px;
+  line-height: 22px;
+  color: var(--color-nav-text);
+  max-width: 250px;
+}
+
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.footer-col-title {
+  font-weight: 500;
+  font-size: 11.5px;
+  line-height: 18px;
+  letter-spacing: 1.15px;
+  text-transform: uppercase;
+  color: #838A9E;
+}
+
+.footer-link {
+  padding: 5.25px 0 6.22px;
+  font-weight: 500;
+  font-size: 14.5px;
+  line-height: 22px;
+  color: var(--color-nav-text);
+  -webkit-tap-highlight-color: transparent;
+  /* line-height stays fixed in px (not em), so the size step below doesn't
+     nudge the row's own vertical rhythm -- only the glyphs grow. */
+  transition:
+    color 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    font-size 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.footer-col-title + .footer-link {
+  /* Figma puts the heading-to-list gap above the first link only (21.25px vs
+     5.25px). Given here as margin rather than padding so the 16px of it stays
+     outside the link's hit box and its focus ring -- as padding, hovering up
+     beside the heading lit the link and the ring reached the heading. */
+  margin-top: 16px;
+}
+
+/* Hover feedback is opt-in for real pointers only, so a tap never leaves a
+   sticky :hover state behind. */
+@media (hover: hover) and (pointer: fine) {
+  .footer-link:hover {
+      color: var(--color-accent);
+      font-size: 15.5px;
+      /* Snap in, ease back out, matching the nav row: the slower exit stops the
+         column strobing as the pointer crosses four links in a row. */
+      transition-duration: 0.14s, 0.16s;
+    }
+
+}
+
+.footer-link:focus-visible {
+  color: var(--color-accent);
+  font-size: 15.5px;
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Outside the hover query on purpose: on touch the press is the only feedback
+   there is, so it has to carry the whole confirmation on its own. */
+.footer-link:active {
+  color: var(--color-accent);
+  font-size: 15.5px;
+  transition-duration: 0.07s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer-link,
+    .footer-link:hover,
+    .footer-link:active {
+      transition: color 0.2s ease;
+    }
+
+}
+
+.footer-bottom {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 24px;
+  border-top: 1px solid var(--color-border);
+  font-weight: 400;
+  font-size: 13.5px;
+  line-height: 21px;
+  color: #838A9E;
+}
+
+@media (min-width: 641px) and (max-width: 1023px) {
+  /* Footer: brand across the top, the three link lists under it. */
+  .footer-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 36px 24px;
+    }
+
+  .footer-brand {
+      grid-column: 1 / -1;
+    }
+
+}
+
+@media (max-width: 640px) {
+  /* Footer */
+  .site-footer {
+      margin-top: 56px;
+      padding: 40px 20px 28px;
+    }
+
+  .legal-layout + .site-footer {
+      margin-top: 0;
+    }
+
+  .footer-container {
+      padding: 0;
+      gap: 48px;
+    }
+
+  .footer-grid {
+      grid-template-columns: 1fr 1fr;
+      /* Comp: two 124px columns with the right one at left:150px, and a second
+         row at top:244.37px under a 218.3px first row -- 26px both ways. */
+      gap: 26px;
+    }
+
+  .footer-desc {
+      max-width: 100%;
+    }
+
+  .footer-bottom {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      padding-top: 20px;
+    }
+
+}
+

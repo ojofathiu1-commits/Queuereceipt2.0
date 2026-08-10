@@ -1,0 +1,1288 @@
+/* ---- Section - PROBLEM ---- */
+.problem {
+  background: #F3F5FB;
+  padding: 90px var(--gutter);
+}
+
+.problem-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 48px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 28px;
+}
+
+.problem-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 15.4px;
+  max-width: 640px;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 5.5px 13px 5.88px;
+  border-radius: 999px;
+  background: #FCEBCF;
+  font-weight: 500;
+  font-size: 12.5px;
+  line-height: 19px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #C67F16;
+}
+
+.problem-heading {
+  font-weight: 800;
+  font-size: 52px;
+  line-height: 53px;
+  letter-spacing: -1.04px;
+  color: var(--color-dark-text);
+}
+
+.problem-paragraph {
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 28px;
+  color: var(--color-nav-text);
+}
+
+.problem-cards {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+}
+
+.problem-card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 28px;
+  gap: 9px;
+  flex: 1;
+  background: #FFFFFF;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 2px 8px rgba(22, 30, 52, 0.06);
+  border-radius: 26px;
+}
+
+.problem-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 15px;
+  font-size: 24px;
+  line-height: 37px;
+}
+
+.icon-ink {
+  background: #FCEBCF;
+}
+
+.icon-scattered {
+  background: #E6E9F3;
+}
+
+.icon-money {
+  background: #E9ECF5;
+}
+
+/* ---- Section - HOW IT WORKS ---- */
+.how-it-works {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 54px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 88.53px 28px 0;
+}
+
+.hiw-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15.4px;
+  max-width: 640px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.hiw-heading {
+  font-weight: 800;
+  font-size: 52px;
+  line-height: 53px;
+  letter-spacing: -1.04px;
+  color: var(--color-dark-text);
+}
+
+.hiw-paragraph {
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 27.9px;
+  color: var(--color-nav-text);
+}
+
+.hiw-steps {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 24px;
+  width: 100%;
+}
+
+.hiw-step {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  flex: 1;
+}
+
+.step-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 17px;
+  background: var(--color-dark-text);
+  color: #FFFFFF;
+  font-weight: 800;
+  font-size: 15px;
+  line-height: 23px;
+}
+
+.step-illustration {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 210px;
+}
+
+.step-flat-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.step-title {
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 22px;
+  letter-spacing: -0.44px;
+  color: var(--color-dark-text);
+  padding-top: 14px;
+}
+
+.step-desc {
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 23px;
+  color: var(--color-nav-text);
+}
+
+/* ---- Section - FEATURES ---- */
+.features {
+  margin-top: 88.56px;
+  background: #161E34;
+  padding: 90px var(--gutter);
+}
+
+.features-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 50px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 28px;
+}
+
+.features-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 15.4px;
+  max-width: 640px;
+}
+
+.tag-dark {
+  background: rgba(240, 158, 45, 0.16);
+  color: #F09E2D;
+}
+
+.features-heading {
+  font-weight: 800;
+  font-size: 52px;
+  line-height: 53px;
+  letter-spacing: -1.04px;
+  color: #FFFFFF;
+}
+
+.features-paragraph {
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 28px;
+  color: #AAB3C8;
+}
+
+.features-grid {
+  display: grid;
+  /* 1.4:1:1 is the comp's 456.24/325.88/325.88 exactly, as ratios so the
+     tracks shrink with the container instead of forcing it 1144px wide. */
+  grid-template-columns: 1.4fr 1fr 1fr;
+  grid-template-rows: repeat(2, 1fr);
+  gap: 18px;
+  width: 100%;
+  height: 447.64px;
+}
+
+.feature-card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 26px;
+  border: 1px solid #2B3555;
+  border-radius: 26px;
+  background: #1C2540;
+}
+
+.feature-card-money {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  justify-content: space-between;
+  background: linear-gradient(159.65deg, #1C2540 0%, #162038 100%);
+}
+
+.feature-card-2 {
+  grid-column: 2;
+  grid-row: 1;
+  gap: 7.2px;
+}
+
+.feature-card-3 {
+  grid-column: 3;
+  grid-row: 1;
+  gap: 7.5px;
+  padding: 26px 26px 48.47px;
+}
+
+.feature-card-4 {
+  grid-column: 2;
+  grid-row: 2;
+  gap: 7.2px;
+}
+
+.feature-card-5 {
+  grid-column: 3;
+  grid-row: 2;
+  gap: 7.5px;
+  padding: 26px 26px 48.47px;
+}
+
+.feature-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  margin-bottom: 18px;
+}
+
+.feature-icon-money,
+.feature-icon-accent {
+  background: rgba(240, 158, 45, 0.16);
+}
+
+.feature-title {
+  font-weight: 700;
+  font-size: 21px;
+  line-height: 21px;
+  letter-spacing: -0.42px;
+  color: #FFFFFF;
+  margin-bottom: 9px;
+}
+
+.feature-desc {
+  font-weight: 400;
+  font-size: 14.5px;
+  line-height: 22px;
+  color: #9AA4BD;
+}
+
+.spending-list {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 18px;
+  margin-top: 39.23px;
+  background: #0E1525;
+  border: 1px solid #2B3555;
+  border-radius: 16px;
+}
+
+.spending-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8.5px 0 8.65px;
+  border-bottom: 1px solid #1C2540;
+}
+
+.spending-row-last {
+  border-bottom: none;
+}
+
+.spending-label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-weight: 400;
+  font-size: 13px;
+  color: #C0C8DB;
+}
+
+.spending-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 4.5px;
+}
+
+.dot-groceries { background: #F09E2D; }
+
+.dot-dining { background: #64748B; }
+
+.dot-electronics { background: #161E34; }
+
+.dot-home { background: #B58B30; }
+
+.spending-amount {
+  font-weight: 500;
+  font-size: 13px;
+  color: #FFFFFF;
+}
+
+.problem-card-title {
+  font-weight: 700;
+  font-size: 21px;
+  line-height: 21px;
+  letter-spacing: -0.42px;
+  color: var(--color-dark-text);
+  padding-top: 9px;
+}
+
+.problem-card-desc {
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 23px;
+  color: var(--color-nav-text);
+}
+
+/* ---- Section - SEGMENTS ---- */
+.segments {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 89.48px 28px 0;
+}
+
+.segments-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 15.4px;
+  max-width: 640px;
+}
+
+.segments-heading {
+  font-weight: 800;
+  font-size: 52px;
+  line-height: 53px;
+  letter-spacing: -1.04px;
+  color: var(--color-dark-text);
+}
+
+.segments-paragraph {
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 28px;
+  color: var(--color-nav-text);
+}
+
+/* Registered so the mobile edge fade below can be transitioned: an unregistered
+   custom property jumps between values, which would pop the fade in and out. */
+@property --tabs-fade-start {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --tabs-fade-end {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+.segments-tabs {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 5px;
+  background: #FFFFFF;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 2px 8px rgba(22, 30, 52, 0.06);
+  border-radius: 999px;
+}
+
+.segment-tab {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11.5px 20px 12px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  font-family: 'Switzer', sans-serif;
+  font-weight: 700;
+  font-size: 14.5px;
+  line-height: 19px;
+  color: var(--color-nav-text);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Same pattern as .nav-links a: hover is opt-in for real pointers only, so a
+   tap on a touch device never leaves a sticky background behind. */
+@media (hover: hover) and (pointer: fine) {
+  .segment-tab:hover {
+      background-color: #F4F6FA;
+      transition-duration: 0.13s;
+    }
+
+  /* The active tab's accent fill must not be overridden by hover. */
+  .segment-tab-active:hover {
+      background: var(--color-accent);
+    }
+
+}
+
+.segment-tab-active {
+  background: var(--color-accent);
+  color: var(--color-dark-text);
+}
+
+.segments-card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  isolation: isolate;
+  width: 100%;
+  background: #FFFFFF;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 18px 50px -22px rgba(22, 30, 52, 0.3);
+  border-radius: 32px;
+  overflow: hidden;
+}
+
+/* The class's own `display: flex` above outranks the UA stylesheet's
+   `[hidden] { display: none }` at equal specificity (author sheet loads
+   later), so a hidden panel would render anyway without this. */
+.segments-card[hidden] {
+  display: none;
+}
+
+.segments-phone-panel {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-height: 430px;
+  padding: 36px;
+  background: linear-gradient(164.76deg, #FFFFFF 0%, #FCEBCF 100%);
+}
+
+.segments-phone-frame {
+  box-sizing: border-box;
+  background: #0E1525;
+  border: 9px solid #0E1525;
+  box-shadow: 0 34px 70px -30px rgba(22, 30, 52, 0.6);
+  border-radius: 36px;
+}
+
+.segments-phone-frame img {
+  display: block;
+  border-radius: 28px;
+}
+
+.segments-content {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  flex: 1;
+  padding: 42px;
+}
+
+.segments-title {
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 31px;
+  letter-spacing: -0.6px;
+  color: var(--color-dark-text);
+}
+
+.segments-card-paragraph {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 25px;
+  color: var(--color-nav-text);
+}
+
+.segments-checklist {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 13px;
+  padding-top: 8.01px;
+  list-style: none;
+}
+
+.checklist-item {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 12px;
+  font-weight: 400;
+  font-size: 15.5px;
+  line-height: 24px;
+  color: var(--color-dark-text);
+}
+
+/* ---- Section - RETAILER CTA ---- */
+.retailer-cta {
+  box-sizing: border-box;
+  /* Full-bleed child of body, so it carries its own gutter rather than
+     inheriting one. Resolves to exactly 1144px from 1512px up. */
+  width: calc(100% - 2 * var(--gutter-wide));
+  max-width: 1144px;
+  margin: 107.96px auto 0;
+  padding: 64px 0;
+  background: #161E34;
+  border-radius: 26px;
+}
+
+.retailer-cta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+  width: 100%;
+  padding: 0 28px;
+}
+
+.retailer-cta-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 15.4px;
+}
+
+.retailer-cta-heading {
+  font-weight: 800;
+  font-size: 44px;
+  line-height: 45px;
+  letter-spacing: -0.88px;
+  color: #FFFFFF;
+}
+
+.retailer-cta-paragraph {
+  font-weight: 400;
+  font-size: 16.5px;
+  line-height: 26px;
+  color: #AAB3C8;
+  max-width: 561px;
+}
+
+.retailer-steps {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 12px;
+}
+
+.retailer-step {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.retailer-step-number {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4.5px 9px 4.65px;
+  border: 1px solid #2B3555;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--color-accent);
+}
+
+.retailer-step-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1.8px;
+}
+
+.retailer-step-title {
+  font-weight: 700;
+  font-size: 15.5px;
+  line-height: 24px;
+  color: #FFFFFF;
+}
+
+.retailer-step-desc {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 22px;
+  color: #9FA8BC;
+}
+
+.demo-form {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7.4px;
+  padding: 28px;
+  background: #1C2540;
+  border: 1px solid #2B3555;
+  border-radius: 26px;
+}
+
+.demo-form-title {
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 18px;
+  letter-spacing: -0.36px;
+  color: #FFFFFF;
+}
+
+.demo-form-paragraph {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 22px;
+  color: #9FA8BC;
+  max-width: 476px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+  width: 100%;
+  padding-top: 12.6px;
+}
+
+.form-label {
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 17px;
+  letter-spacing: 0.88px;
+  text-transform: uppercase;
+  color: #7A84A0;
+}
+
+.form-input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 13px 15px;
+  background: #0E1525;
+  border: 1px solid #2B3555;
+  border-radius: 12px;
+  font-family: 'Switzer', sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 20px;
+  color: #FFFFFF;
+}
+
+.form-input::placeholder {
+  color: #5A6480;
+}
+
+/* ---- Section - FAQ ---- */
+.faq {
+  margin-top: 90px;
+  background: #F3F5FB;
+  padding: 110px var(--gutter-wide) 90px;
+}
+
+.faq-grid {
+  display: grid;
+  /* 2:3 == the comp's 437.6/656.4 within the 1144px column. */
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  gap: 50px;
+  max-width: 1144px;
+  margin: 0 auto;
+}
+
+.faq-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 15.4px;
+}
+
+.faq-heading {
+  font-weight: 800;
+  font-size: 52px;
+  line-height: 53px;
+  letter-spacing: -1.04px;
+  color: var(--color-dark-text);
+}
+
+.faq-paragraph {
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 28px;
+  color: var(--color-nav-text);
+}
+
+.faq-email {
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--color-border);
+}
+
+.faq-item {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 22px 0;
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+  background: transparent;
+  cursor: pointer;
+}
+
+.faq-question {
+  font-family: 'Switzer', sans-serif;
+  font-weight: 700;
+  font-size: 18.5px;
+  line-height: 24px;
+  color: var(--color-dark-text);
+  text-align: left;
+}
+
+.faq-item img {
+  transition: transform 0.2s ease;
+}
+
+.faq-item-open img {
+  transform: rotate(45deg);
+}
+
+/* ---- Section - FINAL CTA ---- */
+.final-cta {
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 17.4px;
+  width: calc(100% - 2 * var(--gutter-wide));
+  max-width: 1144px;
+  margin: 36px auto;
+  padding: 80px 40px;
+  background: linear-gradient(154.78deg, #1C2540 0%, #0E1525 100%);
+  box-shadow: 0 40px 90px -40px rgba(22, 30, 52, 0.45);
+  border-radius: 36px;
+  isolation: isolate;
+}
+
+.final-cta-glow {
+  position: absolute;
+  left: 66.54%;
+  right: -12%;
+  top: 78.1%;
+  bottom: -58%;
+  background: radial-gradient(70.71% 70.71% at 50% 50%, rgba(240, 158, 45, 0.45) 0%, rgba(240, 158, 45, 0) 62%);
+  filter: blur(5px);
+  border-radius: 260px;
+  z-index: 0;
+}
+
+.final-cta-tag {
+  position: relative;
+  z-index: 1;
+  background: rgba(240, 158, 45, 0.18);
+  color: var(--color-accent);
+  text-align: center;
+}
+
+.final-cta-heading {
+  position: relative;
+  z-index: 1;
+  font-weight: 800;
+  font-size: 60px;
+  line-height: 61px;
+  letter-spacing: -1.2px;
+  color: #FFFFFF;
+  text-align: center;
+  max-width: 483.84px;
+}
+
+.final-cta-paragraph {
+  position: relative;
+  z-index: 1;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 28px;
+  color: #AAB3C8;
+  text-align: center;
+  max-width: 456.19px;
+}
+
+.final-cta-btn-wrap {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  padding-top: 14.59px;
+}
+
+.final-cta-microcopy {
+  position: relative;
+  z-index: 1;
+  margin-top: 2.6px;
+  font-weight: 400;
+  font-size: 13.5px;
+  line-height: 21px;
+  color: #7A84A0;
+  text-align: center;
+  max-width: 342.14px;
+}
+
+@media (max-width: 1511px) {
+  .features-grid {
+      height: auto;
+    }
+
+}
+
+@media (min-width: 641px) and (max-width: 1023px) {
+  /* Problem / how it works */
+  /* Two up, with the odd third keeping the same width rather than growing to
+       fill its row -- .hiw-step's image is width:100% and stretches if it does. */
+  .problem-cards,
+    .hiw-steps {
+      flex-wrap: wrap;
+    }
+
+  .problem-card {
+      flex: 0 1 calc(50% - 10px);
+    }
+
+  .hiw-step {
+      flex: 0 1 calc(50% - 12px);
+    }
+
+  /* Features: the tall money card goes full width, the rest become 2x2. */
+  /* height: auto because the narrower tracks wrap the card copy onto more
+       lines; the desktop rule's fixed height only holds at desktop widths. */
+  .features-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: none;
+      height: auto;
+    }
+
+  .feature-card-money {
+      grid-column: 1 / -1;
+      grid-row: 1;
+    }
+
+  .feature-card-2 {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+  .feature-card-3 {
+      grid-column: 2;
+      grid-row: 2;
+    }
+
+  .feature-card-4 {
+      grid-column: 1;
+      grid-row: 3;
+    }
+
+  .feature-card-5 {
+      grid-column: 2;
+      grid-row: 3;
+    }
+
+  /* Segments */
+  .segments-card {
+      flex-direction: column;
+    }
+
+  .segments-phone-panel {
+      width: 100%;
+      min-height: 0;
+      padding: 32px;
+    }
+
+  .segments-content {
+      padding: 32px;
+    }
+
+  /* Retailer CTA + FAQ */
+  .retailer-cta-grid {
+      grid-template-columns: 1fr;
+      gap: 36px;
+    }
+
+  .faq-grid {
+      grid-template-columns: 1fr;
+      gap: 36px;
+    }
+
+}
+
+@media (max-width: 640px) {
+  .final-cta-btn-wrap {
+      flex-direction: column;
+      align-items: stretch;
+      width: 100%;
+    }
+
+  /* Problem */
+  .problem {
+      padding: 56px 20px;
+    }
+
+  .problem-container {
+      padding: 0;
+      gap: 32px;
+    }
+
+  .problem-heading {
+      font-size: 34px;
+      line-height: 36px;
+      letter-spacing: -0.68px;
+    }
+
+  .problem-paragraph {
+      font-size: 16px;
+      line-height: 25px;
+    }
+
+  .problem-cards {
+      flex-direction: column;
+      gap: 16px;
+    }
+
+  .problem-card {
+      flex: none;
+      width: 100%;
+    }
+
+  /* How it works */
+  .how-it-works {
+      padding: 56px 20px 0;
+      gap: 40px;
+    }
+
+  .hiw-heading {
+      font-size: 34px;
+      line-height: 36px;
+      letter-spacing: -0.68px;
+    }
+
+  .hiw-paragraph {
+      font-size: 16px;
+      line-height: 25px;
+    }
+
+  .hiw-steps {
+      flex-direction: column;
+      gap: 40px;
+    }
+
+  .hiw-step {
+      flex: none;
+      width: 100%;
+    }
+
+  /* Features */
+  .features {
+      margin-top: 56px;
+      padding: 56px 20px;
+    }
+
+  .features-container {
+      padding: 0;
+      gap: 32px;
+    }
+
+  .features-heading {
+      font-size: 34px;
+      line-height: 36px;
+      letter-spacing: -0.68px;
+    }
+
+  .features-paragraph {
+      font-size: 16px;
+      line-height: 25px;
+    }
+
+  .features-grid {
+      grid-template-columns: 1fr;
+      grid-template-rows: none;
+      height: auto;
+      gap: 16px;
+    }
+
+  .feature-card-money,
+    .feature-card-2,
+    .feature-card-3,
+    .feature-card-4,
+    .feature-card-5 {
+      grid-column: 1;
+      grid-row: auto;
+    }
+
+  .feature-card-3,
+    .feature-card-5 {
+      padding: 26px;
+    }
+
+  /* Segments */
+  .segments {
+      padding: 56px 20px 0;
+      gap: 20px;
+    }
+
+  .segments-heading {
+      font-size: 34px;
+      line-height: 36px;
+      letter-spacing: -0.68px;
+    }
+
+  .segments-paragraph {
+      font-size: 16px;
+      line-height: 25px;
+    }
+
+  /* The row overflows here (3 tabs, ~350px of space) and the scrollbar is
+       hidden, so the only thing telling a reader that "Retailers" exists is the
+       soft edge. The cue is a mask rather than an overlay because an absolutely
+       positioned overlay inside a scroll container scrolls away with the
+       content; a mask stays pinned to the visible edge. scripts.js sizes the two
+       fades from the scroll position so neither one ever hints at content that
+       isn't there. */
+  .segments-tabs {
+      max-width: 100%;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+      -webkit-mask-image: linear-gradient(
+        to right,
+        transparent 0,
+        #000 var(--tabs-fade-start, 0px),
+        #000 calc(100% - var(--tabs-fade-end, 0px)),
+        transparent 100%
+      );
+      mask-image: linear-gradient(
+        to right,
+        transparent 0,
+        #000 var(--tabs-fade-start, 0px),
+        #000 calc(100% - var(--tabs-fade-end, 0px)),
+        transparent 100%
+      );
+      /* The mask is clipped to the border box, which would drop the pill's outer
+         shadow; no-clip keeps it painting. */
+      -webkit-mask-clip: no-clip;
+      mask-clip: no-clip;
+      transition:
+        --tabs-fade-start 0.18s ease,
+        --tabs-fade-end 0.18s ease;
+    }
+
+  .segments-tabs-fade-start {
+      --tabs-fade-start: 36px;
+    }
+
+  .segments-tabs-fade-end {
+      --tabs-fade-end: 36px;
+    }
+
+  .segments-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+  @media (prefers-reduced-motion: reduce) {
+    .segments-tabs {
+          scroll-behavior: auto;
+          transition: none;
+        }
+
+  }
+
+  .segment-tab {
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+  .segments-card {
+      flex-direction: column;
+    }
+
+  .segments-phone-panel {
+      min-height: 0;
+      padding: 24px;
+      width: 100%;
+    }
+
+  .segments-content {
+      padding: 24px;
+    }
+
+  .segments-title {
+      font-size: 24px;
+      line-height: 26px;
+    }
+
+  /* Retailer CTA */
+  .retailer-cta {
+      width: calc(100% - 24px);
+      margin: 56px auto 0;
+      padding: 40px 0;
+      border-radius: 20px;
+    }
+
+  .retailer-cta-grid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+      padding: 0 20px;
+    }
+
+  .retailer-cta-heading {
+      font-size: 28px;
+      line-height: 30px;
+      letter-spacing: -0.56px;
+    }
+
+  .demo-form {
+      padding: 20px;
+    }
+
+  /* FAQ */
+  .faq {
+      margin-top: 56px;
+      padding: 56px 20px;
+    }
+
+  .faq-grid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+  .faq-heading {
+      font-size: 34px;
+      line-height: 36px;
+      letter-spacing: -0.68px;
+    }
+
+  .faq-question {
+      font-size: 16.5px;
+    }
+
+  /* Final CTA */
+  .final-cta {
+      width: calc(100% - 24px);
+      margin: 28px auto 0;
+      padding: 48px 20px;
+      border-radius: 24px;
+    }
+
+  .final-cta-heading {
+      font-size: 32px;
+      line-height: 34px;
+      letter-spacing: -0.64px;
+      max-width: 100%;
+    }
+
+  .final-cta-paragraph {
+      font-size: 16px;
+      line-height: 25px;
+      max-width: 100%;
+    }
+
+}
+
+.demo-submit {
+  box-sizing: border-box;
+  width: 100%;
+  margin-top: 8.6px;
+  padding: 15.5px 26px 16px;
+  border: none;
+  background: var(--color-accent);
+  border-radius: 999px;
+  font-family: 'Switzer', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 21px;
+  text-align: center;
+  color: var(--color-dark-text);
+  box-shadow:
+    0 10px 24px -8px rgba(208, 131, 26, 0.6),
+    inset 0 -2px 0 0 rgba(130, 85, 10, 0.18);
+  cursor: pointer;
+}
+

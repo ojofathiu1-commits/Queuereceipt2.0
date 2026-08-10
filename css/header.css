@@ -1,0 +1,521 @@
+/* ---- Header - NAV ---- */
+.header-nav {
+  width: 100%;
+  max-width: 1512px;
+  margin: 0 auto;
+  height: 75px;
+  padding: 0 var(--gutter);
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1200px;
+  height: 74px;
+  padding: 0 28px;
+  margin: 0 auto;
+}
+
+.logo img {
+  display: block;
+  width: 113.66px;
+  height: 40px;
+}
+
+.nav-links {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+}
+
+.nav-links a {
+  position: relative;
+  z-index: 1;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 15.5px;
+  line-height: 24px;
+  letter-spacing: 0;
+  color: var(--color-nav-text);
+  -webkit-tap-highlight-color: transparent;
+  /* Matches the pill's own duration/curve below so text color and the pill
+     arriving under it read as one movement, not two out-of-step ones. */
+  transition:
+    background-color 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* One shared pill glides between links instead of two backgrounds
+   cross-fading, so a section change reads as a single object moving. It is
+   injected by scripts.js -- .has-nav-pill marks that it is in play. */
+.nav-pill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 999px;
+  background-color: #FCEBCF;
+  box-shadow: 0 2px 8px -2px rgba(198, 127, 22, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  /* cubic-bezier(0.22, 1, 0.36, 1) ("expo-out") front-loads less hard than
+     the docking-nav curve this used to share: measured frame-by-frame, the
+     old (0.32, 0.72, 0, 1) curve covered ~95% of the travel by the halfway
+     point and then spent the second half creeping through the last few
+     px -- motion that looks finished well before transitionend actually
+     fires. This curve empties into a much shorter tail, and the shorter
+     duration keeps what tail remains under a couple of frames. */
+  transition:
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    width 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    height 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.22s ease;
+}
+
+.nav-pill-visible {
+  opacity: 1;
+}
+
+/* Set while the pill is repositioned without travel (first paint, resize,
+   fade-in at a new spot). */
+.nav-pill-instant {
+  transition: none;
+}
+
+/* Hover feedback is opt-in for real pointers only, so a tap on a touch
+   device never leaves a sticky :hover state behind. */
+@media (hover: hover) and (pointer: fine) {
+  .nav-links a:hover {
+      background-color: #F4F6FA;
+      color: var(--color-dark-text);
+      /* Snap in, ease back out -- the slower exit keeps the row from
+         flickering as the pointer sweeps across several pills. */
+      transition-duration: 0.13s;
+    }
+
+  /* The active pill must not be overridden by hover -- it stays lit for as
+       long as its section is the current one. */
+  .nav-links a.nav-link-active:hover {
+      background-color: #FCEBCF;
+      color: #C67F16;
+    }
+
+}
+
+.nav-links a.nav-link-active {
+  background-color: #FCEBCF;
+  color: #C67F16;
+}
+
+/* Fallback fill above is only for a pill-less nav; with the pill present it
+   would double up. Must outrank the :hover rule, hence the later position. */
+.nav-links.has-nav-pill a.nav-link-active,
+.nav-links.has-nav-pill a.nav-link-active:hover {
+  background-color: transparent;
+}
+
+.nav-links a:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-pill {
+      transition: opacity 0.15s ease;
+    }
+
+}
+
+.header-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+}
+
+/* The two header actions are one primary/secondary pair, so they share a
+   hover vocabulary: identical lift, identical timing. Only the surface each
+   one lifts off differs -- neutral for the secondary, accent for the CTA.
+
+   Neither uses the nav pill's expo-out curve for the lift. Sampled
+   frame-by-frame, that curve puts a third of a 3px rise into the first frame
+   and creeps through the rest: correct for the pill's long lateral slide,
+   but a 3px vertical move under it reads as a teleport rather than a motion.
+   The curve below spreads the same travel over more frames. It stays on the
+   shadow, where a front-loaded bloom with a long tail is exactly right. */
+.request-demo {
+  /* Sized so the hover pill lands near the CTA's height instead of reading as
+     an undersized chip beside it. */
+  padding: 11px 18px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 15.5px;
+  line-height: 24px;
+  letter-spacing: 0;
+  color: var(--color-dark-text);
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: inset 0 0 0 1px transparent;
+  /* Order is load-bearing: the :hover rules below override durations
+     positionally via transition-duration. */
+  transition:
+    transform 0.26s cubic-bezier(0.33, 0.8, 0.35, 1),
+    box-shadow 0.36s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .request-demo:hover {
+      transform: translateY(-3px);
+      background-color: #F4F6FA;
+      /* The inset ring gives the fill an edge -- without it the pill is an
+         edgeless smudge rather than a surface that rose off the header. */
+      box-shadow:
+        inset 0 0 0 1px var(--color-border),
+        0 1px 1px 0 rgba(22, 30, 52, 0.04),
+        0 6px 16px -6px rgba(22, 30, 52, 0.18);
+      /* Snap in, ease back out, matching the nav row: the slower exit keeps the
+         button the pointer just left settling as its neighbour rises. */
+      transition-duration: 0.19s, 0.32s, 0.2s;
+    }
+
+}
+
+/* "Request demo" owns #retailer-demo the way each nav link owns its section,
+   so it takes the nav's active pair. The travelling .nav-pill cannot come with
+   it -- that pill is measured inside .nav-links and this button lives in
+   .header-actions -- so the fill is painted locally here instead. */
+.request-demo.nav-link-active,
+.request-demo.nav-link-active:hover {
+  background-color: #FCEBCF;
+  color: #C67F16;
+  box-shadow: inset 0 0 0 1px transparent;
+  transform: none;
+}
+
+.request-demo:active {
+  transform: translateY(0);
+  transition-duration: 0.07s, 0.09s, 0.09s;
+}
+
+.request-demo:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.get-app-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 15px 26px;
+  border-radius: 999px;
+  background: var(--color-accent);
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 24.8px;
+  letter-spacing: 0;
+  color: var(--color-dark-text);
+  -webkit-tap-highlight-color: transparent;
+  /* Three stacked casts, not one: a tight contact shadow that keeps the pill
+     attached to the header, a mid cast for body, and a wide ambient tint. The
+     single spread value this replaces collapsed all three into one hard slab
+     that read as an extruded plastic edge. The top inset is the lit edge that
+     makes it a physical surface. */
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 0 rgba(130, 85, 10, 0.2),
+    0 1px 2px 0 rgba(140, 90, 12, 0.35),
+    0 5px 12px -4px rgba(208, 131, 26, 0.5),
+    0 14px 30px -12px rgba(208, 131, 26, 0.55);
+  transition:
+    transform 0.26s cubic-bezier(0.33, 0.8, 0.35, 1),
+    box-shadow 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .get-app-btn:hover {
+      transform: translateY(-3px);
+      /* Lifting off a surface softens the contact shadow and spreads the ambient
+         one -- moving both in the same direction is what made the old hover
+         state near-invisible next to its rest state. */
+      box-shadow:
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.38),
+        inset 0 -1px 0 0 rgba(130, 85, 10, 0.2),
+        0 1px 2px 0 rgba(140, 90, 12, 0.28),
+        0 8px 18px -4px rgba(208, 131, 26, 0.55),
+        0 22px 42px -14px rgba(208, 131, 26, 0.62);
+      /* Shadow outlasts the lift on purpose: the pill arrives, then the light
+         catches up. Matched durations read as one flat state swap. */
+      transition-duration: 0.19s, 0.32s;
+    }
+
+}
+
+/* Pressed goes below the resting line, not merely back to it -- undoing the
+   hover lift alone gives a keyboard or touch press, which never lifted, no
+   feedback at all. The top inset flips from highlight to occlusion so the face
+   reads as pushed into the header, and the outer casts collapse to almost
+   nothing because a pressed button has no gap left to cast into.
+
+   Layer count and inset/outset order match the rest and hover lists exactly:
+   box-shadow interpolates per layer, and a list that changes length or flips a
+   layer between inset and outset snaps instead of animating. */
+.get-app-btn:active {
+  transform: translateY(1px);
+  box-shadow:
+    inset 0 2px 4px 0 rgba(130, 85, 10, 0.28),
+    inset 0 -1px 0 0 rgba(130, 85, 10, 0.3),
+    0 1px 1px 0 rgba(140, 90, 12, 0.42),
+    0 2px 5px -2px rgba(208, 131, 26, 0.42),
+    0 5px 12px -8px rgba(208, 131, 26, 0.4);
+  /* A press has to land under the finger, so no easing tail here. Release is
+     deliberately not specified: letting go drops back to the :hover rule and
+     inherits its slower durations, so the button snaps down and eases back up. */
+  transition-duration: 0.07s, 0.09s;
+}
+
+/* "Get the app" owns #final-cta, but it is already the loudest thing in the
+   header -- there is no louder fill to promote it to, and the palette has no
+   second accent to swap in. So being current is marked with the nav's own
+   active ink (#C67F16) drawn as an inner ring: same colour vocabulary as every
+   other active state, without restating the emphasis it already has.
+
+   The ring is the placeholder treatment, not a settled one -- swapping it is a
+   one-property change to the box-shadow below. Whatever replaces it belongs
+   here rather than on the button, because the button's own shadow stack is
+   fully spoken for by the rest/hover/press states: a sixth layer that appears
+   only on .nav-link-active would change the list length and make those three
+   transitions snap instead of interpolate. Riding inside the button, this also
+   inherits the hover lift and the press for free, so the scroll-driven state
+   and the pointer-driven ones compose instead of fighting. */
+.get-app-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 2px #C67F16;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.get-app-btn.nav-link-active::after {
+  opacity: 1;
+}
+
+.get-app-btn:focus-visible {
+  outline: 2px solid var(--color-dark-text);
+  outline-offset: 2px;
+}
+
+/* Drop the travel, keep the light: the shadow and fill changes still confirm
+   the hover and the press, they just stop moving anything. */
+@media (prefers-reduced-motion: reduce) {
+  .request-demo,
+    .request-demo:hover,
+    .request-demo:active,
+    .get-app-btn,
+    .get-app-btn:hover,
+    .get-app-btn:active {
+      transform: none;
+      transition:
+        box-shadow 0.2s ease,
+        background-color 0.2s ease;
+    }
+
+  .get-app-btn::after {
+      transition: opacity 0.15s ease;
+    }
+
+}
+
+/* ---- Mobile nav (hamburger + drawer) ---- */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.menu-toggle-bar {
+  display: block;
+  width: 22px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--color-dark-text);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.menu-toggle-open .menu-toggle-bar:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.menu-toggle-open .menu-toggle-bar:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-toggle-open .menu-toggle-bar:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.mobile-nav {
+  display: none;
+  flex-direction: column;
+  width: 100%;
+  background: #FFFFFF;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.mobile-nav.mobile-nav-open {
+  display: flex;
+}
+
+.mobile-nav a {
+  position: relative;
+  padding: 16px 24px;
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--color-nav-text);
+  border-bottom: 1px solid var(--color-border);
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 0.26s cubic-bezier(0.32, 0.72, 0, 1),
+    color 0.26s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* A stacked drawer has no room for a travelling pill, so the active row gets
+   an accent rail that expands in place instead. */
+.mobile-nav a::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 3px;
+  background-color: #C67F16;
+  transform: scaleY(0);
+  transition: transform 0.26s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.mobile-nav a.nav-link-active::before {
+  transform: scaleY(1);
+}
+
+.mobile-nav a.nav-link-active {
+  background-color: #FCEBCF;
+  color: #C67F16;
+}
+
+/* Touch has no hover, so the press itself carries the feedback. */
+.mobile-nav a:active {
+  background-color: #F4F6FA;
+}
+
+.mobile-nav a.nav-link-active:active {
+  background-color: #FCEBCF;
+}
+
+.mobile-nav a:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -3px;
+}
+
+@keyframes nav-drawer-item-in {
+  from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+
+}
+
+.mobile-nav.mobile-nav-open a {
+  animation: nav-drawer-item-in 0.28s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+.mobile-nav.mobile-nav-open a:nth-child(2) { animation-delay: 0.025s; }
+
+.mobile-nav.mobile-nav-open a:nth-child(3) { animation-delay: 0.05s; }
+
+.mobile-nav.mobile-nav-open a:nth-child(4) { animation-delay: 0.075s; }
+
+.mobile-nav.mobile-nav-open a:nth-child(5) { animation-delay: 0.1s; }
+
+.mobile-nav.mobile-nav-open a:nth-child(6) { animation-delay: 0.125s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-nav.mobile-nav-open a {
+      animation: none;
+    }
+
+  .mobile-nav a::before {
+      transition: none;
+    }
+
+}
+
+.mobile-nav-demo {
+  color: var(--color-dark-text) !important;
+  font-weight: 700 !important;
+}
+
+@media (max-width: 1199px) {
+  .nav-links {
+      display: none;
+    }
+
+  .menu-toggle {
+      display: flex;
+    }
+
+}
+
+@media (max-width: 640px) {
+  /* Header */
+  .header-nav {
+      height: auto;
+      padding: 0 20px;
+    }
+
+  .header-container {
+      padding: 12px 0;
+      height: auto;
+    }
+
+  .nav-links,
+    .header-actions .request-demo {
+      display: none;
+    }
+
+  .get-app-btn {
+      padding: 11px 20px;
+      font-size: 14.5px;
+    }
+
+  .menu-toggle {
+      display: flex;
+    }
+
+}
+
