@@ -269,6 +269,20 @@ section[id].legal-section {
   scroll-margin-top: 100px;
 }
 
+/* scripts.js focuses the section after an anchor jump (tabindex="-1", purely
+   for screen-reader/keyboard users landing in the right place) -- without
+   this the browser's raw default outline shows instead, which on iOS Safari
+   is a heavy blue box around the whole section on every tap of a TOC link. */
+section[id].legal-section:focus {
+  outline: none;
+}
+
+section[id].legal-section:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 6px;
+  border-radius: 4px;
+}
+
 #data-we-collect {
   gap: 9.2px;
 }

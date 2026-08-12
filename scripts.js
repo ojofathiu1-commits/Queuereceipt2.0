@@ -487,16 +487,17 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  document.querySelectorAll('.faq-item').forEach(function (item) {
-    item.addEventListener('click', function () {
+  document.querySelectorAll('.faq-toggle').forEach(function (toggle) {
+    toggle.addEventListener('click', function () {
+      const item = toggle.closest('.faq-item');
       const isOpen = item.classList.contains('faq-item-open');
       document.querySelectorAll('.faq-item').forEach(function (other) {
         other.classList.remove('faq-item-open');
-        other.setAttribute('aria-expanded', 'false');
+        other.querySelector('.faq-toggle').setAttribute('aria-expanded', 'false');
       });
       if (!isOpen) {
         item.classList.add('faq-item-open');
-        item.setAttribute('aria-expanded', 'true');
+        toggle.setAttribute('aria-expanded', 'true');
       }
     });
   });

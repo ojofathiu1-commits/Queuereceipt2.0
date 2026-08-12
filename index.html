@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>QueueReceipts</title>
+<link rel="icon" type="image/png" href="images/logo.png">
 <link rel="preconnect" href="https://api.fontshare.com">
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700,800&display=swap">
 <link rel="stylesheet" href="css/base.css">
@@ -405,34 +406,83 @@
       <p class="faq-paragraph">Still curious? Reach the team any time at <a href="mailto:hello@queuereceipts.app" class="faq-email">hello@queuereceipts.app</a>.</p>
     </div>
     <div class="faq-list">
-      <button class="faq-item" aria-expanded="false">
-        <span class="faq-question">What exactly is QueueReceipts?</span>
-        <img src="images/icon-plus.svg" alt="" width="30" height="30">
-      </button>
-      <button class="faq-item" aria-expanded="false">
-        <span class="faq-question">How do I add a receipt?</span>
-        <img src="images/icon-plus.svg" alt="" width="30" height="30">
-      </button>
-      <button class="faq-item" aria-expanded="false">
-        <span class="faq-question">What does QueueReceipts read from a receipt?</span>
-        <img src="images/icon-plus.svg" alt="" width="30" height="30">
-      </button>
-      <button class="faq-item" aria-expanded="false">
-        <span class="faq-question">Can it handle different currencies?</span>
-        <img src="images/icon-plus.svg" alt="" width="30" height="30">
-      </button>
-      <button class="faq-item" aria-expanded="false">
-        <span class="faq-question">What if a store doesn't offer QR receipts?</span>
-        <img src="images/icon-plus.svg" alt="" width="30" height="30">
-      </button>
-      <button class="faq-item" aria-expanded="false">
-        <span class="faq-question">Can I search old receipts?</span>
-        <img src="images/icon-plus.svg" alt="" width="30" height="30">
-      </button>
-      <button class="faq-item" aria-expanded="false">
-        <span class="faq-question">Is my data private and secure?</span>
-        <img src="images/icon-plus.svg" alt="" width="30" height="30">
-      </button>
+      <div class="faq-item">
+        <button class="faq-toggle" id="faq-q-1" aria-expanded="false" aria-controls="faq-a-1">
+          <span class="faq-question">What exactly is QueueReceipts?</span>
+          <img src="images/icon-plus.svg" alt="" width="30" height="30">
+        </button>
+        <div class="faq-answer" id="faq-a-1" role="region" aria-labelledby="faq-q-1">
+          <div class="faq-answer-inner">
+            <p>QueueReceipts is a receipt management app. Scan any paper or digital receipt and it is read, organised, and stored automatically — giving you reliable proof of purchase, clear spending insights, and a searchable history on your phone.</p>
+          </div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-toggle" id="faq-q-2" aria-expanded="false" aria-controls="faq-a-2">
+          <span class="faq-question">How do I add a receipt?</span>
+          <img src="images/icon-plus.svg" alt="" width="30" height="30">
+        </button>
+        <div class="faq-answer" id="faq-a-2" role="region" aria-labelledby="faq-q-2">
+          <div class="faq-answer-inner">
+            <p>Take a photo of a paper receipt, forward a digital one, or scan a retailer's QR code at checkout. Each receipt is processed and filed in about a second.</p>
+          </div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-toggle" id="faq-q-3" aria-expanded="false" aria-controls="faq-a-3">
+          <span class="faq-question">What does QueueReceipts read from a receipt?</span>
+          <img src="images/icon-plus.svg" alt="" width="30" height="30">
+        </button>
+        <div class="faq-answer" id="faq-a-3" role="region" aria-labelledby="faq-q-3">
+          <div class="faq-answer-inner">
+            <p>It reads the merchant, date, line items, taxes, and totals from any receipt, including faded or crumpled ones, then sorts it into the correct category and records warranty periods on major purchases.</p>
+          </div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-toggle" id="faq-q-4" aria-expanded="false" aria-controls="faq-a-4">
+          <span class="faq-question">Can it handle different currencies?</span>
+          <img src="images/icon-plus.svg" alt="" width="30" height="30">
+        </button>
+        <div class="faq-answer" id="faq-a-4" role="region" aria-labelledby="faq-q-4">
+          <div class="faq-answer-inner">
+            <p>Yes. Over 150 currencies are recognised and converted automatically, with the original amounts always preserved — useful for travel and cross-border shopping.</p>
+          </div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-toggle" id="faq-q-5" aria-expanded="false" aria-controls="faq-a-5">
+          <span class="faq-question">What if a store doesn't offer QR receipts?</span>
+          <img src="images/icon-plus.svg" alt="" width="30" height="30">
+        </button>
+        <div class="faq-answer" id="faq-a-5" role="region" aria-labelledby="faq-q-5">
+          <div class="faq-answer-inner">
+            <p>That is not a problem. QueueReceipts works with any receipt from any store — simply take a photo. QR digital receipts are an added convenience where a retailer offers them, not a requirement.</p>
+          </div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-toggle" id="faq-q-6" aria-expanded="false" aria-controls="faq-a-6">
+          <span class="faq-question">Can I search old receipts?</span>
+          <img src="images/icon-plus.svg" alt="" width="30" height="30">
+        </button>
+        <div class="faq-answer" id="faq-a-6" role="region" aria-labelledby="faq-q-6">
+          <div class="faq-answer-inner">
+            <p>Yes. Search by merchant, item, date, or amount to retrieve any receipt in seconds, with totals and trends already calculated.</p>
+          </div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-toggle" id="faq-q-7" aria-expanded="false" aria-controls="faq-a-7">
+          <span class="faq-question">Is my data private and secure?</span>
+          <img src="images/icon-plus.svg" alt="" width="30" height="30">
+        </button>
+        <div class="faq-answer" id="faq-a-7" role="region" aria-labelledby="faq-q-7">
+          <div class="faq-answer-inner">
+            <p>Every receipt is encrypted and stored in a secure vault that only you can access. We never sell your data — your information remains yours alone.</p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
