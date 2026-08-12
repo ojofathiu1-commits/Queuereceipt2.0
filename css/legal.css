@@ -609,6 +609,15 @@ section[id].legal-section:focus-visible {
       scroll-margin-top: calc(var(--legal-header-h, 72px) + var(--legal-toc-h, 59px));
     }
 
+  /* Not part of the mobile design: the focus outline added for keyboard/AT
+     users after a TOC jump (see the base section[id].legal-section:focus
+     rule) is desktop-only. Touch users on mobile never see it anyway since
+     tapping doesn't trigger :focus-visible in most browsers, but Safari iOS
+     is an exception -- this rule is what actually suppresses it there. */
+  section[id].legal-section:focus-visible {
+      outline: none;
+    }
+
   .legal-section h2 {
       font-size: 24px;
     }
