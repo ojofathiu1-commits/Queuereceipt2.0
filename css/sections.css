@@ -578,7 +578,7 @@
 .checklist-item {
   display: flex;
   flex-direction: row;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 12px;
   font-weight: 400;
   font-size: 15.5px;
@@ -1224,12 +1224,12 @@
     }
 
   .segments-content {
-      padding: 24px;
+      padding: 41.295px 42px 42px;
+      gap: 13.4px;
     }
 
-  .segments-title {
-      font-size: 24px;
-      line-height: 26px;
+  .segments-checklist {
+      padding: 8.59px 0 0;
     }
 
   /* Retailer CTA */
