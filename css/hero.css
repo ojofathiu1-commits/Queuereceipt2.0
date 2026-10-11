@@ -418,3 +418,221 @@
 
 }
 
+/* ---- Hero entrance ---- */
+
+/* The hero plays as one piece, in reading order: badge, headline, marker,
+   paragraph, store buttons, then the glow, the phone and its three cards.
+   scripts.js splits the headline into words, waits until the webfonts and the
+   hero images are in, then adds .hero-in to .hero. Every piece runs the same
+   animation (hero-reveal) with its own start and length, and reads its
+   progress from --hero-p to fade and lift itself. Each animation fills
+   `backwards` only, so nothing is held after the last frame: what is left on
+   screen is the static design above, not an approximation of it.
+
+   --hero-speed scales every time at once (1 is as designed, 0.8 is 25%
+   slower, 1.25 is faster). Each piece below gives its start (--hero-at) and
+   length (--hero-for) in ms at speed 1, and --hero-lift for how far it rises. */
+.hero-grid {
+  --hero-speed: 1;
+  --hero-ease: cubic-bezier(0.33, 1, 0.68, 1);
+  --hero-step: 120ms;
+}
+
+.badge {
+  --hero-at: 0ms;
+  --hero-for: 900ms;
+  --hero-lift: 12px;
+}
+
+.hero-word {
+  --hero-at: calc(200ms + var(--i, 0) * var(--hero-step));
+  --hero-for: 1300ms;
+  /* The whole 1.02em line plus the mask's padding and a little more, so a word
+     starts fully below its mask. */
+  --hero-lift: 1.275em;
+}
+
+/* "receipt" has mostly landed when the marker starts drawing; this curve
+   starts gently, like a pen touching down, then settles. */
+.hero-heading .highlight {
+  --hero-at: calc(720ms + var(--i, 0) * var(--hero-step));
+  --hero-for: 900ms;
+  --hero-ease: cubic-bezier(0.5, 0, 0.1, 1);
+}
+
+.hero-paragraph {
+  --hero-at: 900ms;
+  --hero-for: 1000ms;
+  --hero-lift: 16px;
+}
+
+.hero-buttons .store-badge {
+  --hero-for: 900ms;
+  --hero-lift: 16px;
+}
+
+.hero-buttons .store-badge-apple { --hero-at: 1050ms; }
+
+.hero-buttons .store-badge-google { --hero-at: calc(1050ms + var(--hero-step)); }
+
+.hero-see-more {
+  --hero-at: 1300ms;
+  --hero-for: 800ms;
+  --hero-lift: 12px;
+}
+
+.gradient-blur {
+  --hero-at: 150ms;
+  --hero-for: 1600ms;
+}
+
+.phone-frame {
+  --hero-at: 300ms;
+  --hero-for: 1400ms;
+  --hero-lift: 32px;
+}
+
+.floating-card {
+  --hero-for: 900ms;
+  --hero-lift: 14px;
+}
+
+.card-scanned { --hero-at: 1000ms; }
+
+.card-tracked { --hero-at: calc(1000ms + var(--hero-step)); }
+
+.card-warranty { --hero-at: calc(1000ms + 2 * var(--hero-step)); }
+
+/* One column (tablets and phones) puts the phone under the text instead of
+   beside it, so it comes in after the text, in reading order. */
+@media (max-width: 1279px) {
+  .gradient-blur { --hero-at: 900ms; }
+
+  .phone-frame {
+    --hero-at: 1000ms;
+    --hero-for: 1200ms;
+  }
+
+  .card-scanned { --hero-at: 1700ms; }
+
+  .card-tracked { --hero-at: calc(1700ms + var(--hero-step)); }
+
+  .card-warranty { --hero-at: calc(1700ms + 2 * var(--hero-step)); }
+}
+
+/* The progress every piece reads, 0 to 1. Registered so it can be animated; at
+   1 (its initial value) every piece sits exactly where the static design puts
+   it. Animating one number, and deriving fade, lift and the marker's clip from
+   it, keeps the whole entrance on the main thread. That is deliberate:
+   transform and clip-path animations run on the compositor, and in testing a
+   transform made the words' letters nudge by up to half a pixel on the frame
+   it ended (edge pixels off by up to 190/255), while a clip-path animation
+   changed how the store buttons' rounded corners, 500px away, were drawn (24
+   pixels, the same on every load, by up to 59/255). */
+@property --hero-p {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 1;
+}
+
+@keyframes hero-reveal {
+  from { --hero-p: 0; }
+}
+
+@keyframes hero-failsafe {
+  to { visibility: visible; }
+}
+
+/* Everything that moves lives in here, so with reduced motion on the hero is
+   the original design and nothing is held back. */
+@media (prefers-reduced-motion: no-preference) {
+  /* Held back only when scripting is on (the head adds .js), so with JS off
+     the hero is just there. The animation is the way out if scripts.js never
+     gets to add .hero-in: the hero must not be able to stay invisible. */
+  .js .hero:not(.hero-in) .hero-grid {
+    visibility: hidden;
+    animation: hero-failsafe 0s linear 3s forwards;
+  }
+
+  /* The mask. The 1.02 line-height leaves descenders (the p and g) and the r/t
+     overhang outside the box, so padding widens the clip region and the equal
+     negative margin hands the layout back: the headline wraps and measures
+     exactly as plain text did. vertical-align: top because an overflow other
+     than visible moves an inline-block's baseline down to its bottom edge.
+     `clip` follows `hidden` (older engines keep hidden): a clipped box is not
+     a scroll container, so find-in-page or a focus jump cannot scroll a
+     still-hidden word into view mid-entrance (with hidden alone, one
+     scrollIntoView moved every mask by 95px and showed the words ahead of
+     their turn). */
+  .hero-word {
+    display: inline-block;
+    vertical-align: top;
+    overflow: hidden;
+    overflow: clip;
+    padding: 0.12em 0.1em;
+    margin: -0.12em -0.1em;
+  }
+
+  .hero-word-inner {
+    display: block;
+  }
+
+  /* Lift: `top` on a relatively positioned box, repainted in place. With the
+     default top: auto it could not be interpolated, so progress is turned into
+     a length instead. (Layout shift for the whole hero scored 0.0004, against
+     0.0005 for the original page; 0.1 is the limit for "good".) */
+  :is(
+    .badge,
+    .hero-word-inner,
+    .hero-paragraph,
+    .hero-buttons .store-badge,
+    .hero-see-more,
+    .phone-frame
+  ) {
+    position: relative;
+    top: calc((1 - var(--hero-p)) * var(--hero-lift, 16px));
+  }
+
+  :is(
+    .badge,
+    .hero-paragraph,
+    .hero-buttons .store-badge,
+    .hero-see-more,
+    .gradient-blur,
+    .phone-frame,
+    .floating-card
+  ) {
+    opacity: var(--hero-p);
+  }
+
+  /* The cards are placed by all four insets, so moving `top` would resize
+     them. Equal and opposite margins shift the box down without changing its
+     height, whichever edges it is anchored to. */
+  .floating-card {
+    margin-top: calc((1 - var(--hero-p)) * var(--hero-lift));
+    margin-bottom: calc((1 - var(--hero-p)) * var(--hero-lift) * -1);
+  }
+
+  /* The marker draws left to right behind "receipt". clip-path rather than
+     scaleX so the nib keeps its 6px rounded end instead of being squashed flat
+     while it grows. At 1 the clip reaches 1px past the painted shape, which
+     changes nothing: an exact-fit clip anti-aliases its edge differently from
+     border-radius. */
+  .hero-heading .highlight::before {
+    clip-path: inset(-1px calc((1 - var(--hero-p)) * (100% + 1px) - 1px) -1px -1px round 6px);
+  }
+
+  .hero-in :is(
+    .badge,
+    .hero-word-inner,
+    .hero-paragraph,
+    .hero-buttons .store-badge,
+    .hero-see-more,
+    .gradient-blur,
+    .phone-frame,
+    .floating-card
+  ),
+  .hero-in .hero-heading .highlight::before {
+    animation: hero-reveal calc(var(--hero-for) / var(--hero-speed)) var(--hero-ease) calc(var(--hero-at) / var(--hero-speed)) backwards;
+  }
+}

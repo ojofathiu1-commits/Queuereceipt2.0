@@ -127,12 +127,26 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
   padding-top: 24px;
   border-top: 1px solid var(--color-border);
   font-weight: 400;
   font-size: 13.5px;
   line-height: 21px;
   color: #838A9E;
+}
+
+.footer-recaptcha {
+  flex-basis: 100%;
+  margin-top: 12px;
+  font-size: 12px;
+  line-height: 18px;
+  color: #9AA1B4;
+}
+
+.footer-recaptcha a {
+  color: inherit;
+  text-decoration: underline;
 }
 
 @media (min-width: 641px) and (max-width: 1023px) {

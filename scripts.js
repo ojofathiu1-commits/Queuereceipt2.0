@@ -22,6 +22,99 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   /* ------------------------------------------------------------------ *
+   * Hero entrance.
+   *
+   * hero.css plays the whole hero as one choreography once .hero-in is on
+   * .hero. The only markup work done here is the headline: every word is
+   * wrapped in a mask (.hero-word) around the piece that actually moves
+   * (.hero-word-inner). The split lives here rather than in the markup so the
+   * headline in index.html stays one plain sentence that can be reworded
+   * without re-nesting a dozen spans.
+   *
+   * The start is gated on every webfont and every hero image. Fontshare
+   * serves its faces with font-display: swap, so on a first visit the hero
+   * would otherwise paint in the fallback face and re-flow when Switzer lands
+   * -- mid-animation, words jumping sideways, the paragraph re-wrapping, the
+   * badge resizing -- and a late image would pop into a half-risen phone.
+   * Cached, the wait is a few ms; the cap means a stalled file delays the
+   * hero but can never hold it back.
+   *
+   * .hero-in is added inside requestAnimationFrame, which never fires in a
+   * hidden tab, so a page opened in the background plays its entrance when
+   * someone is actually looking at it instead of finishing unseen.
+   * ------------------------------------------------------------------ */
+
+  const HERO_WAIT_MS = 1000;
+  const hero = document.querySelector('.hero');
+  const heroHeading = hero && hero.querySelector('.hero-heading');
+
+  // The inline script in index.html's head adds .js, and hero.css only hides
+  // the hero when it is there. Without it nothing is held back, so animating
+  // the hero in anyway would flash it first. With reduced motion on none of
+  // this runs, and hero.css has no entrance for those visitors either: the
+  // headline stays one plain piece of text.
+  if (
+    heroHeading &&
+    document.documentElement.classList.contains('js') &&
+    !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  ) {
+    let wordIndex = 0;
+
+    const splitWords = function (parent) {
+      Array.prototype.slice.call(parent.childNodes).forEach(function (node) {
+        if (node.nodeType === 1) {
+          // An element (the highlighted span) takes the index of the first
+          // word inside it, so anything timed off its --i follows that word.
+          node.style.setProperty('--i', wordIndex);
+          splitWords(node);
+          return;
+        }
+        if (node.nodeType !== 3 || !node.nodeValue.trim()) return;
+
+        const pieces = document.createDocumentFragment();
+        node.nodeValue.split(/(\s+)/).forEach(function (part) {
+          if (!part) return;
+          if (!part.trim()) {
+            pieces.appendChild(document.createTextNode(part));
+            return;
+          }
+          const word = document.createElement('span');
+          const inner = document.createElement('span');
+          word.className = 'hero-word';
+          word.style.setProperty('--i', wordIndex++);
+          inner.className = 'hero-word-inner';
+          inner.textContent = part;
+          word.appendChild(inner);
+          pieces.appendChild(word);
+        });
+        parent.replaceChild(pieces, node);
+      });
+    };
+
+    splitWords(heroHeading);
+
+    // load() and decode() rather than fonts.ready: ready can resolve before the
+    // first layout has even asked for a face, whereas these start the fetch
+    // themselves. A face or image that fails is not worth waiting for.
+    const ignore = function () {};
+    const heroReady = Promise.all([
+      document.fonts && Promise.all(Array.from(document.fonts).map(function (face) {
+        return face.load().catch(ignore);
+      })),
+      Promise.all(Array.from(hero.querySelectorAll('img')).map(function (img) {
+        return img.decode && img.decode().catch(ignore);
+      }))
+    ]);
+
+    Promise.race([
+      heroReady,
+      new Promise(function (resolve) { setTimeout(resolve, HERO_WAIT_MS); })
+    ]).then(function () {
+      requestAnimationFrame(function () { hero.classList.add('hero-in'); });
+    });
+  }
+
+  /* ------------------------------------------------------------------ *
    * Anchor scrolling.
    *
    * This replaces `scroll-behavior: smooth`, whose curve the CSS spec gives
@@ -501,6 +594,185 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
   });
+  // ---------------------------------------------------------------------------
+  // Retailer demo form submission
+  // ---------------------------------------------------------------------------
+
+  const DEMO_ENDPOINT =
+    "https://api.queuereceipts.co.uk/v1/demo-request"
+  const RECAPTCHA_SITE_KEY = '6LfMncwsAAAAANskXc8qhix7-itJwvl47mOIAqeL';
+  // Must match `expectedAction` in the backend's recaptcha.config.ts, or the
+  // server rejects the token as replayed from another page.
+  const RECAPTCHA_ACTION = 'retailer_demo';
+
+  const demoForm = document.querySelector('#demo-form');
+
+  if (demoForm) {
+    const demoButton = demoForm.querySelector('.demo-submit');
+    const demoButtonLabel = demoButton ? demoButton.textContent : '';
+    let demoSending = false;
+
+    // vanilla-sonner publishes window.toast once its script has run. Guarding
+    // keeps a blocked/failed CDN from turning a form error into a TypeError
+    // that swallows the submission entirely.
+    const setDemoStatus = function (message, state) {
+      const toast = window.toast;
+      if (!toast) return;
+
+      if (state === 'error') {
+        toast.error(message);
+      } else if (state === 'success') {
+        toast.success(message);
+      } else {
+        toast.info(message);
+      }
+    };
+
+    const firstInvalidField = function () {
+      const fields = Array.prototype.slice.call(
+        demoForm.querySelectorAll('input')
+      );
+
+      for (let i = 0; i < fields.length; i++) {
+        fields[i].value = fields[i].value.trim();
+
+        if (!fields[i].checkValidity()) return fields[i];
+      }
+
+      return null;
+    };
+
+    // reCAPTCHA v3 tokens expire after ~2 minutes, so one is minted per
+    // submission rather than once on page load.
+    const getRecaptchaToken = function () {
+      return new Promise(function (resolve, reject) {
+        if (typeof grecaptcha === 'undefined' || !grecaptcha.ready) {
+          reject(new Error('recaptcha-unavailable'));
+          return;
+        }
+
+        grecaptcha.ready(function () {
+          grecaptcha
+            .execute(RECAPTCHA_SITE_KEY, { action: RECAPTCHA_ACTION })
+            .then(resolve, function () {
+              reject(new Error('recaptcha-failed'));
+            });
+        });
+      });
+    };
+
+    const messageForStatus = function (status) {
+      // Specific messages: a generic "something went wrong" loses the lead,
+      // because the visitor has no idea whether retrying is worth it.
+      if (status === 400) {
+        return 'Please check your details and try again.';
+      }
+      if (status === 403) {
+        return "We couldn't verify you're human. Please try again.";
+      }
+      if (status === 429) {
+        return 'Too many requests. Please try again later.';
+      }
+      if (status === 502 || status === 503) {
+        return "We couldn't send your request. Please email admin@sleekabyte.com directly.";
+      }
+      return 'Something went wrong. Please try again or email admin@sleekabyte.com.';
+    };
+
+    demoForm.addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      // A double-click would otherwise mint a second token and burn one of the
+      // three hourly submissions the API allows.
+      if (demoSending) return;
+
+      const invalid = firstInvalidField();
+
+      if (invalid) {
+        setDemoStatus(
+          invalid.validity.typeMismatch
+            ? 'Please enter a valid email address.'
+            : 'Please fill in all three fields.',
+          'error'
+        );
+        invalid.focus();
+        return;
+      }
+
+      demoSending = true;
+
+      if (demoButton) {
+        demoButton.disabled = true;
+        demoButton.textContent = 'Sending...';
+      }
+
+      setDemoStatus('Sending your request...', null);
+
+      getRecaptchaToken()
+        .then(function (token) {
+          return fetch(DEMO_ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contactName: demoForm.elements.contactName.value,
+              workEmail: demoForm.elements.workEmail.value,
+              storeBrand: demoForm.elements.storeBrand.value,
+              recaptchaToken: token
+            })
+          });
+        })
+        .then(function (response) {
+          if (!response.ok) {
+            throw Object.assign(new Error("request-failed"), {
+              status: response.status,
+            })
+          }
+          
+          return response
+            .json()
+            .catch(function () {
+              return {}
+            })
+            .then(function (data) {
+              setDemoStatus(
+                data.message ||
+                  "Thanks. We've gotten your request and will be in touch soon.",
+                "success",
+              )
+              demoForm.reset()
+            })
+        })
+        .catch(function (error) {
+          if (
+            error.message === 'recaptcha-unavailable' ||
+            error.message === 'recaptcha-failed'
+          ) {
+            setDemoStatus(
+              "We couldn't run the spam check. Please refresh and try again.",
+              'error'
+            );
+            return;
+          }
+
+          // No status: the fetch itself failed (offline, DNS, CORS).
+          setDemoStatus(
+            error.status
+              ? messageForStatus(error.status)
+              : 'Network error. Please check your connection and try again.',
+            'error'
+          );
+        })
+        .then(function () {
+          demoSending = false;
+
+          if (demoButton) {
+            demoButton.disabled = false;
+            demoButton.textContent = demoButtonLabel;
+          }
+        });
+    });
+  }
+
 
   /* ------------------------------------------------------------------ *
    * Legal page contents nav: scrollspy + mobile docking sub-nav.
@@ -886,4 +1158,5 @@ document.addEventListener('DOMContentLoaded', function () {
       requestAnimationFrame(settle);
     });
   }
+
 });
