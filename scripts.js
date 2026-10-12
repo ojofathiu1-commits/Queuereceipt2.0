@@ -115,6 +115,133 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   /* ------------------------------------------------------------------ *
+   * Scroll reveal.
+   *
+   * sections.css draws the motion; this decides what moves and when. It
+   * plays every time a piece comes back into view, not just the first time.
+   *
+   * Two observers per piece. One watches the whole viewport: a piece that
+   * has been on screen and is now wholly out of sight is held back again
+   * (.reveal), invisible where no one can see it vanish. The other watches
+   * the viewport less 12% at the top and bottom, and releases a held piece
+   * (.is-revealing) as it crosses in, so it starts once it is properly in
+   * view from either edge. The 12% between the two keeps a piece resting
+   * near an edge from flickering between states. Pieces released in the
+   * same moment (a row of cards, or a heading and its paragraph on a quick
+   * scroll) are staggered in the order they come into view. When a piece
+   * finishes, both classes come off and it is the static design again.
+   *
+   * The scroll direction picks the motion: going down, pieces rise into
+   * place; going up, they settle down from above, so the motion always
+   * carries on the way the page is travelling. Direction is taken from the
+   * last scroll rather than from where the piece is, since one wheel notch
+   * or Page Up can carry a piece fully into view in a single frame.
+   *
+   * At load, pieces already on screen are left alone, so nothing blinks out
+   * and back in; they join in once they have scrolled away and come back.
+   * ------------------------------------------------------------------ */
+
+  const REVEAL_TARGETS = [
+    '.problem-text > *', '.problem-card',
+    '.hiw-text > *', '.hiw-step',
+    '.features-text > *', '.feature-card', '.spending-row',
+    '.segments-text > *', '.segments-tabs',
+    '.segments-card', '.segments-card .checklist-item',
+    '.sustain-text > *', '.sustain-card',
+    '.retailer-cta', '.retailer-step',
+    '.faq-text > *', '.faq-item',
+    '.final-cta'
+  ].join(', ');
+  /* 90ms apart, but a whole batch spreads over 360ms at most: a fast flick
+     or a nav link's flight can release a screenful at once, and at a fixed
+     step the last piece of ten would sit blank for most of a second. */
+  const REVEAL_STEP_MS = 90;
+  const REVEAL_SPREAD_MS = 360;
+
+  if (
+    'IntersectionObserver' in window &&
+    !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  ) {
+    let revealLastY = window.pageYOffset;
+    let revealScrollingUp = false;
+    window.addEventListener('scroll', function () {
+      const y = window.pageYOffset;
+      if (y !== revealLastY) revealScrollingUp = y < revealLastY;
+      revealLastY = y;
+    }, { passive: true });
+
+    const holdReveal = function (el) {
+      el.classList.remove('is-revealing');
+      el.style.removeProperty('--reveal-delay');
+      el.style.removeProperty('--reveal-dir');
+      el.classList.add('reveal');
+    };
+
+    const revealObserver = new IntersectionObserver(function (entries) {
+      const arriving = entries
+        .filter(function (entry) {
+          const classes = entry.target.classList;
+          return entry.isIntersecting && classes.contains('reveal') && !classes.contains('is-revealing');
+        })
+        .sort(function (a, b) {
+          // The order they come into view: top first going down, bottom first
+          // going up, left to right within a row (pieces on one row can
+          // differ in top by a fraction of a pixel).
+          const dy = a.boundingClientRect.top - b.boundingClientRect.top;
+          if (Math.abs(dy) > 2) return revealScrollingUp ? -dy : dy;
+          return a.boundingClientRect.left - b.boundingClientRect.left;
+        });
+      const stepMs = Math.min(REVEAL_STEP_MS, REVEAL_SPREAD_MS / Math.max(1, arriving.length - 1));
+      arriving.forEach(function (entry, i) {
+        const el = entry.target;
+        el.style.setProperty('--reveal-delay', Math.round(i * stepMs) + 'ms');
+        el.style.setProperty('--reveal-dir', revealScrollingUp ? '-1' : '1');
+        el.classList.add('is-revealing');
+      });
+    }, { rootMargin: '-12% 0px -12% 0px' });
+
+    /* Only a piece that has been on screen is held again on leaving it (the
+       ones below the fold at load are held by the loop below). A piece with
+       no box at all has been hidden, not scrolled away (a "For you" panel
+       when its tab is switched), and is let go instead: whichever panel a
+       tab shows appears at once, the way it always has. */
+    const revealSeen = new WeakSet();
+    const holdObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        const el = entry.target;
+        if (entry.isIntersecting) {
+          revealSeen.add(el);
+        } else if (!entry.boundingClientRect.width && !entry.boundingClientRect.height) {
+          el.classList.remove('reveal', 'is-revealing');
+        } else if (revealSeen.has(el)) {
+          holdReveal(el);
+        }
+      });
+    });
+
+    // The section the page was opened at (index.html#final-cta) is left
+    // alone too: the browser scrolls to that box, and a piece mid-reveal
+    // still sits away from where it will rest.
+    const openedAt = location.hash.length > 1 ? document.getElementById(location.hash.slice(1)) : null;
+
+    document.querySelectorAll(REVEAL_TARGETS).forEach(function (el) {
+      // A hidden tab panel measures 0 here, so it is left alone until shown.
+      if (el !== openedAt && el.getBoundingClientRect().top >= window.innerHeight) {
+        el.classList.add('reveal');
+      }
+      revealObserver.observe(el);
+      holdObserver.observe(el);
+    });
+
+    document.addEventListener('animationend', function (e) {
+      if (e.animationName !== 'reveal' || !e.target.classList.contains('is-revealing')) return;
+      e.target.classList.remove('reveal', 'is-revealing');
+      e.target.style.removeProperty('--reveal-delay');
+      e.target.style.removeProperty('--reveal-dir');
+    });
+  }
+
+  /* ------------------------------------------------------------------ *
    * Anchor scrolling.
    *
    * This replaces `scroll-behavior: smooth`, whose curve the CSS spec gives
@@ -183,8 +310,16 @@ document.addEventListener('DOMContentLoaded', function () {
      the header offset and the landing position cannot drift from it. */
   const anchorTargetY = function (el) {
     const margin = parseFloat(getComputedStyle(el).scrollMarginTop);
+    /* Measured where the target will rest, not where a scroll reveal is
+       moving it: a piece mid-reveal sits off its place by its `translate`,
+       and two of them (the retailer and download cards) are link targets
+       themselves. Read with the lift switched off for the one measurement;
+       nothing paints in between. */
+    const inlineTranslate = el.style.translate;
+    el.style.translate = 'none';
     const y = el.getBoundingClientRect().top + window.pageYOffset -
       (isNaN(margin) ? 0 : margin);
+    el.style.translate = inlineTranslate;
     return Math.max(0, Math.min(Math.round(y), maxScrollTop()));
   };
 
@@ -300,28 +435,92 @@ document.addEventListener('DOMContentLoaded', function () {
     if (id && location.hash !== href) history.pushState(null, '', href);
   });
 
+  /* ------------------------------------------------------------------ *
+   * Mobile menu (below 1366px). header.css draws the dropdown card and
+   * animates it; this opens and closes it and adds the scrim behind it.
+   *
+   * While it is open the page underneath is dimmed and locked, so the card
+   * reads as a layer on top rather than part of the page. Every way out a
+   * visitor might try closes it: the button again, a tap on the dimmed page,
+   * Escape, any link (in the card or elsewhere in the header), tabbing past
+   * the last row, or the window widening to the desktop nav, where there is
+   * no button left to close it with.
+   *
+   * The scrim is added here rather than written into each page, since it
+   * means nothing without this script. It cannot live inside the header
+   * either: the header's backdrop-filter makes it the containing block for
+   * fixed-position children, so a fixed scrim in there would only cover the
+   * header.
+   * ------------------------------------------------------------------ */
+
   const menuToggle = document.querySelector('.menu-toggle');
   const mobileNav = document.getElementById('mobile-nav');
   let onMenuToggle = null;
 
   if (menuToggle && mobileNav) {
+    const navScrim = document.createElement('div');
+    navScrim.className = 'nav-scrim';
+    navScrim.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(navScrim);
+
+    let navMenuOpen = false;
+
+    const setMenuOpen = function (open) {
+      if (open === navMenuOpen) return;
+      navMenuOpen = open;
+      mobileNav.classList.toggle('mobile-nav-open', open);
+      navScrim.classList.toggle('nav-scrim-visible', open);
+      menuToggle.classList.toggle('menu-toggle-open', open);
+      menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      menuToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      document.documentElement.classList.toggle('menu-open', open);
+      if (onMenuToggle) onMenuToggle(open);
+    };
+
     menuToggle.addEventListener('click', function () {
-      const isOpen = mobileNav.classList.toggle('mobile-nav-open');
-      menuToggle.classList.toggle('menu-toggle-open', isOpen);
-      menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-      menuToggle.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
-      if (onMenuToggle) onMenuToggle(isOpen);
+      setMenuOpen(!navMenuOpen);
     });
 
     mobileNav.querySelectorAll('a').forEach(function (link) {
       link.addEventListener('click', function () {
-        mobileNav.classList.remove('mobile-nav-open');
-        menuToggle.classList.remove('menu-toggle-open');
-        menuToggle.setAttribute('aria-expanded', 'false');
-        menuToggle.setAttribute('aria-label', 'Open menu');
-        if (onMenuToggle) onMenuToggle(false);
+        setMenuOpen(false);
       });
     });
+
+    /* Capture phase, so it runs before the anchor scroller's bubble-phase
+       listener: a header link clicked with the menu open ("Get the app", the
+       logo) finds the page already unlocked when its scroll is measured. */
+    document.addEventListener('click', function (e) {
+      if (!navMenuOpen) return;
+      if (mobileNav.contains(e.target) || menuToggle.contains(e.target)) return;
+      setMenuOpen(false);
+    }, true);
+
+    document.addEventListener('keydown', function (e) {
+      if (!navMenuOpen || e.key !== 'Escape') return;
+      setMenuOpen(false);
+      menuToggle.focus();
+    });
+
+    /* relatedTarget is null when focus goes nowhere (a tap on the card's own
+       padding), and that must not count as leaving. */
+    if (siteHeader) {
+      siteHeader.addEventListener('focusout', function (e) {
+        if (navMenuOpen && e.relatedTarget && !siteHeader.contains(e.relatedTarget)) {
+          setMenuOpen(false);
+        }
+      });
+    }
+
+    const desktopNavQuery = window.matchMedia('(min-width: 1366px)');
+    const closeMenuOnDesktop = function () {
+      if (desktopNavQuery.matches) setMenuOpen(false);
+    };
+    if (desktopNavQuery.addEventListener) {
+      desktopNavQuery.addEventListener('change', closeMenuOnDesktop);
+    } else if (desktopNavQuery.addListener) {
+      desktopNavQuery.addListener(closeMenuOnDesktop);
+    }
   }
 
   /* ------------------------------------------------------------------ *

@@ -586,6 +586,126 @@
   color: var(--color-dark-text);
 }
 
+/* ---- Section - SUSTAINABILITY ---- */
+/* Sits between "For you" and the retailer pitch: its intro names the same
+   three audiences as the tabs above it, and most of what it argues (paper
+   saved at the till, modernised checkout) is the case the retailer demo below
+   it makes. Same tinted band, header and cards as the problem section, so it
+   reads as part of the page rather than an insert. */
+.sustain {
+  margin-top: 90px;
+  background: #F3F5FB;
+  padding: 90px var(--gutter);
+}
+
+.sustain-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 48px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 28px;
+}
+
+.sustain-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 15.4px;
+  max-width: 640px;
+}
+
+.sustain-heading {
+  font-weight: 800;
+  font-size: 52px;
+  line-height: 53px;
+  letter-spacing: -1.04px;
+  color: var(--color-dark-text);
+}
+
+.sustain-paragraph {
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 28px;
+  color: var(--color-nav-text);
+}
+
+/* Eight cards, the problem section's own: the two ways a receipt stops being
+   paper (the same two ways in "How it works" opens with) two across, then
+   what follows from them three across. Grid rows, so cards side by side
+   always end level whatever their copy wraps to. */
+.sustain-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.sustain-ways,
+.sustain-benefits {
+  display: grid;
+  gap: 20px;
+}
+
+.sustain-ways {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.sustain-benefits {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.sustain-card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 28px;
+  background: #FFFFFF;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 2px 8px rgba(22, 30, 52, 0.06);
+  border-radius: 26px;
+}
+
+.sustain-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 15px;
+  background: #FCEBCF;
+  font-size: 24px;
+  line-height: 37px;
+}
+
+/* The tiles take turns between the accent tint and the cool grey, the way
+   the problem section's "Ink fades" and "Records get scattered" do, so eight
+   tiles don't all land in one orange. Counted in each grid, which runs on
+   as one sequence (orange, grey, orange, ...) and makes a checkerboard on
+   the three-column grid. */
+.sustain-card:nth-child(even) .sustain-card-icon {
+  background: #E6E9F3;
+}
+
+.sustain-card-title {
+  padding-top: 9px;
+  font-weight: 700;
+  font-size: 21px;
+  line-height: 21px;
+  letter-spacing: -0.42px;
+  color: var(--color-dark-text);
+}
+
+.sustain-card-desc {
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 23px;
+  color: var(--color-nav-text);
+}
+
 /* ---- Section - RETAILER CTA ---- */
 .retailer-cta {
   box-sizing: border-box;
@@ -947,6 +1067,14 @@
 
 }
 
+@media (max-width: 1199px) {
+  /* Sustainability: three across leaves the copy too narrow from here down. */
+  .sustain-benefits {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+}
+
 @media (min-width: 641px) and (max-width: 1023px) {
   /* Problem / how it works */
   /* Two up, with the odd third keeping the same width rather than growing to
@@ -1232,6 +1360,39 @@
       padding: 8.59px 0 0;
     }
 
+  /* Sustainability */
+  .sustain {
+      margin-top: 56px;
+      padding: 56px 20px;
+    }
+
+  .sustain-container {
+      padding: 0;
+      gap: 32px;
+    }
+
+  .sustain-heading {
+      font-size: 34px;
+      line-height: 36px;
+      letter-spacing: -0.68px;
+    }
+
+  .sustain-paragraph {
+      font-size: 16px;
+      line-height: 25px;
+    }
+
+  .sustain-cards,
+    .sustain-ways,
+    .sustain-benefits {
+      gap: 16px;
+    }
+
+  .sustain-ways,
+    .sustain-benefits {
+      grid-template-columns: 1fr;
+    }
+
   /* Retailer CTA */
   .retailer-cta {
       width: calc(100% - 24px);
@@ -1331,3 +1492,97 @@
   visibility: hidden;
 }
 
+
+/* ---- Scroll reveal ---- */
+
+/* Below the hero, the page arrives as it scrolls into view, in the hero
+   entrance's own motion: the same curve and the same kind of fade and lift.
+   Section text and cards rise into place, cards in a row one after another,
+   and lists itemise line by line the way a receipt prints: the spending
+   rows, the "For you" checklist, the retailer's three steps, the FAQ.
+
+   It plays every time, not once. scripts.js holds a piece back (.reveal)
+   whenever it is wholly out of sight, and never while any of it is on
+   screen, so nothing visibly blinks out. It releases the piece
+   (.is-revealing) as it comes back into view from either edge, staggering
+   pieces that arrive together. Scrolling down, pieces rise into place;
+   scrolling up, they settle down into place from above. Either way the
+   motion carries on in the direction the page is already travelling. When
+   a piece's animation ends both classes come off, so what stays on screen
+   is the static design itself.
+
+   The lift is `translate`, which layout shift does not count (the hero's
+   `top` lift does count, a little, and here many more pieces move). As in
+   the hero, only a registered number is animated, so nothing runs on the
+   compositor; hero.css has the measurements behind that.
+
+   --reveal-speed scales every reveal at once (1 is as designed, 0.8 is 25%
+   slower, 1.25 is faster). Each piece's length and lift are --reveal-for
+   and --reveal-lift. */
+@property --reveal-p {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 1;
+}
+
+@keyframes reveal {
+  from { --reveal-p: 0; }
+}
+
+:root {
+  --reveal-speed: 1;
+  --reveal-ease: cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+/* Section text and the tabs take the defaults below (900ms, 16px). */
+.problem-card,
+.hiw-step,
+.feature-card,
+.sustain-card {
+  --reveal-for: 1000ms;
+  --reveal-lift: 24px;
+}
+
+/* The big blocks travel further and take longer, as the hero's phone does. */
+.segments-card,
+.retailer-cta,
+.final-cta {
+  --reveal-for: 1200ms;
+  --reveal-lift: 36px;
+}
+
+/* Receipt lines: short and quick, so a list reads as one itemising motion. */
+.spending-row,
+.checklist-item,
+.retailer-step,
+.faq-item {
+  --reveal-for: 700ms;
+  --reveal-lift: 10px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Held: invisible but exactly in place. The lift exists only while
+     revealing, so the observers (and links) always measure where a held
+     piece really is. */
+  .reveal {
+    opacity: 0;
+  }
+
+  /* --reveal-dir is 1 scrolling down (rise from below) and -1 scrolling up
+     (settle from above). During the stagger delay the backwards fill holds
+     the piece at the start, still invisible. */
+  .reveal.is-revealing {
+    opacity: var(--reveal-p);
+    translate: 0 calc((1 - var(--reveal-p)) * var(--reveal-lift, 16px) * var(--reveal-dir, 1));
+    animation: reveal calc(var(--reveal-for, 900ms) / var(--reveal-speed)) var(--reveal-ease) var(--reveal-delay, 0ms) backwards;
+  }
+}
+
+/* Paper gets everything, whatever has or hasn't scrolled into view yet. */
+@media print {
+  .reveal {
+    opacity: 1 !important;
+    translate: none !important;
+    animation: none !important;
+  }
+}
