@@ -447,10 +447,11 @@ document.addEventListener('DOMContentLoaded', function () {
    * no button left to close it with.
    *
    * The scrim is added here rather than written into each page, since it
-   * means nothing without this script. It cannot live inside the header
-   * either: the header's backdrop-filter makes it the containing block for
-   * fixed-position children, so a fixed scrim in there would only cover the
-   * header.
+   * means nothing without this script. It lives outside the header because
+   * it has to sit beneath the header (z-index 99 against the header's 100)
+   * while the card, which is inside the header, sits above it: inside the
+   * header's stacking context it could not go under the header's own
+   * background.
    * ------------------------------------------------------------------ */
 
   const menuToggle = document.querySelector('.menu-toggle');

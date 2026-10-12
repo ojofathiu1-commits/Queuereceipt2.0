@@ -1,13 +1,15 @@
 /* ---- Header - NAV ---- */
+/* Solid white, full width. It used to be 82% white over a blur, so whatever
+   scrolled underneath tinted it: grey over the dark Features band, with the
+   section headings smudging through behind the logo. It also stopped at
+   1512px, so on wider screens the page showed down both sides of it. The
+   content inside stays where it was: .header-container still centres it in
+   a 1200px column. */
 .header-nav {
   width: 100%;
-  max-width: 1512px;
-  margin: 0 auto;
   height: 75px;
   padding: 0 var(--gutter);
-  background: rgba(255, 255, 255, 0.82);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: #FFFFFF;
   border-bottom: 1px solid var(--color-border);
   display: flex;
   flex-wrap: wrap;

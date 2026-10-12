@@ -395,9 +395,19 @@
       gap: 9px;
     }
 
+  /* One line each, as on desktop. Set by two side insets, a phone-width
+     graphic left the warranty card ~161px wide, so "Warranty stored" and its
+     date wrapped to two lines each (and "Categorised automatically" did below
+     375px). These two are now sized by their text and anchored by their
+     outer edge only, so they still overhang the phone by the same 4%. */
+  .card-scanned .card-text,
+    .card-warranty .card-text {
+      white-space: nowrap;
+    }
+
   .card-scanned {
       left: -4%;
-      right: 40%;
+      right: auto;
       top: 2%;
       bottom: auto;
     }
@@ -410,7 +420,7 @@
     }
 
   .card-warranty {
-      left: 58%;
+      left: auto;
       right: -4%;
       top: 58%;
       bottom: auto;
